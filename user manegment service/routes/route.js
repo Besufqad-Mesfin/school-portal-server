@@ -1,9 +1,9 @@
 import express from 'express';
-import { login } from '../controllers/login.js'; // Adjust the path if necessary
+import { loginT } from '../controllers/loginTeacher.js'; // Adjust the path if necessary
 
 const router = express.Router();
 
 // POST route for login
-router.post('/', login);
+router.post('/teacher', loginT);
 
 export default router;

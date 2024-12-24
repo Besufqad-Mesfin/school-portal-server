@@ -5,7 +5,7 @@ const mockUser = {
   lastLogin: null,
 };
 
-export const login = (req, res) => {
+export const loginT = (req, res) => {
  
   const { email, password } = req.body;
 
