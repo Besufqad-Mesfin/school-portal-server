@@ -1,6 +1,6 @@
-import UserTeacher from '../models/UserTeacher.js';
+import UserTeacher from '../models/teacherModel.js';
 
-export const loginT = async (req, res) => {
+export const loginTeacher = async (req, res) => {
   const { firstName, password } = req.body;
 
   try {
@@ -14,4 +14,4 @@ export const loginT = async (req, res) => {
   }
 }
 
-export default loginT;
+export default loginTeacher;
