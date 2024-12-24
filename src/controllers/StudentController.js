@@ -1,26 +1,53 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const router = express.Router();
 
-// Mock database of students
-const users = [
-    { id: 1, username: 'student1', password: 'password123' },
-    { id: 2, username: 'student2', password: 'password456' }
-];
+// Mock database for students
+const students = [];
 
-// Login endpoint
-router.post('/login', (req, res) => {
-    const { username, password } = req.body;
+// Generate a unique ID for new students
+let nextId = 1;
 
-    if (!username || !password) {
-        return res.status(400).json({ message: 'Username and password are required' });
+// Register endpoint for students
+router.post('/register', async (req, res) => {
+    const { firstName, lastName, email, course, password } = req.body;
+
+    // Validate input fields
+    if (!firstName || !lastName || !email || !course) {
+        return res.status(400).json({ message: 'Please fill in all required fields (firstName, lastName, email, course).' });
     }
 
-    const user = users.find(u => u.username === username && u.password === password);
+    // Check if email already exists
+    const existingStudent = students.find(student => student.email === email);
+    if (existingStudent) {
+        return res.status(409).json({ message: 'Email already exists. Please choose a different email.' });
+    }
 
-    if (user) {
-        res.json({ message: 'Login successful', userId: user.id });
-    } else {
-        res.status(401).json({ message: 'Invalid username or password' });
+    try {
+        const generatedPassword = password || crypto.randomBytes(8).toString('hex');
+        const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
+        const newStudent = {
+            id: nextId++,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            course: course,
+            password: hashedPassword
+        };
+
+        students.push(newStudent);
+        res.status(201).json({
+            message: 'Student registered successfully! Password has been generated.',
+            studentId: newStudent.id,
+            username: `${firstName} ${lastName}`,
+            email: newStudent.email,
+            generatedPassword
+        });
+    } catch (err) {
+        console.error('Error registering student:', err);
+        res.status(500).json({ message: 'Error registering student. Please try again later.' });
     }
 });
 
