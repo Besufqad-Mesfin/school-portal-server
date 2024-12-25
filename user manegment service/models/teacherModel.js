@@ -4,7 +4,7 @@ import { DataTypes } from 'sequelize';
 
 // Define the UserTeacher model using the imported sequelize instance
 const UserTeacher = sequelize.define('UserTeacher', {
-  userName: {
+  teacherId: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -12,20 +12,7 @@ const UserTeacher = sequelize.define('UserTeacher', {
     type: DataTypes.STRING, // Changed from INTEGER to STRING for storing hashed passwords
     allowNull: false,
   },
-  role: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
 });
-
-// Sync the model with the database
-UserTeacher.sync({alter:true})
-  .then(() => {
-    console.log('Table and model synced successfully');
-  })
-  .catch((err) => {
-    console.error('Error syncing the table and models:', err);
-  });
 
 // Export the model
 export default UserTeacher;
