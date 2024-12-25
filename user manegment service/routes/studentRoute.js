@@ -1,8 +1,8 @@
 import express from 'express';
-import { studentLogin } from '../controllers/studentLoging.js'; // Ensure this matches exactly
+import { studentLogin } from '../controllers/login/studentLogin.js'; // Ensure this matches exactly
 
-const router = express.Router();
+const studentRoute = express.Router();
 
-router.post('/login', studentLogin); 
+studentRoute.post('/login', studentLogin); 
 
-export default router;
+export default studentRoute;
