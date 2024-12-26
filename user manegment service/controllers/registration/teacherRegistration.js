@@ -1,32 +1,25 @@
+
+
+
+
 // models/UserTeacher.js
 import sequelize from '../config/db.js'; // Import the initialized sequelize instance
 import { DataTypes } from 'sequelize';
 
-// Define the UserTeacher model using the imported sequelize instance
-const UserTeacher = sequelize.define('Teachers', {
+// Define the UserTeacher model
+const UserTeacher = sequelize.define('UserTeacher', {
   teacherId: {
     type: DataTypes.STRING,
     allowNull: false,
-    primaryKey: true,    
+    unique: true, // Ensure teacherId is unique
   },
   password: {
-    type: DataTypes.STRING, // Changed from INTEGER to STRING for storing hashed passwords
+    type: DataTypes.STRING, // Use STRING for storing hashed passwords
     allowNull: false,
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
   },
 });
 
-// Export the model
-
-
-
+// Define the TeacherRegistrationModel
 const TeacherRegistrationModel = sequelize.define('TeacherRegistration', {
   name: {
     type: DataTypes.STRING,
@@ -46,5 +39,4 @@ const TeacherRegistrationModel = sequelize.define('TeacherRegistration', {
   },
 });
 
-
-export { UserTeacher, TeacherRegistrationModel };
+// Export the models
