@@ -1,42 +1,38 @@
+import bcrypt from 'bcrypt';
+import { TeacherRegistrationModel } from '../../models/teacherModel.js';
+
+const registerTeacher = async (req, res) => {
+    const { name, email, password, subject } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !password || !subject) {
+        return res.status(400).json({ message: 'Name, email, password, and subject are required.' });
+    }
+
+    try {
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Save teacher to the database
+        const newTeacher = await TeacherRegistrationModel.create({
+            name,
+            email,
+            subject,
+        });
 
 
 
+        res.status(201).json({ message: 'Teacher registered successfully!', teacher: newTeacher });
+    } catch (error) {
+        console.error('Error registering teacher:', error);
 
-// models/UserTeacher.js
-import sequelize from '../config/db.js'; // Import the initialized sequelize instance
-import { DataTypes } from 'sequelize';
+        // Handle unique constraint violation (e.g., duplicate email)
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({ message: 'Email already exists.' });
+        }
 
-// Define the UserTeacher model
-const UserTeacher = sequelize.define('UserTeacher', {
-  teacherId: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true, // Ensure teacherId is unique
-  },
-  password: {
-    type: DataTypes.STRING, // Use STRING for storing hashed passwords
-    allowNull: false,
-  },
-});
+        res.status(500).json({ message: 'An error occurred while registering the teacher.' });
+    }
+};
 
-// Define the TeacherRegistrationModel
-const TeacherRegistrationModel = sequelize.define('TeacherRegistration', {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true, // Ensure email is unique
-    validate: {
-      isEmail: true, // Validate email format
-    },
-  },
-  subject: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
-
-// Export the models
+export default registerTeacher;
