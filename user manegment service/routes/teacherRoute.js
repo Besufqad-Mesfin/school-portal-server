@@ -1,9 +1,9 @@
 import express from 'express';
 import { loginTeacher } from '../controllers/login/teacherLogin.js'; // Adjust the path if necessary
 
-const router = express.Router();
+const teacherRoute = express.Router();
 
 // POST route for login
-router.post('/login', loginTeacher);
+teacherRoute.post('/login', loginTeacher);
 
-export default router;
+export default teacherRoute;

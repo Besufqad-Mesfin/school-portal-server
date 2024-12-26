@@ -4,8 +4,8 @@ import adminLogin from '../controllers/login/adminLogin.js'; // Ensure this matc
 const adminRoute = express.Router();
 
 adminRoute.post('/login', adminLogin);
-adminRoute.post("/studentRegister", adminLogin);
-adminRoute.post("/teacherRegister", adminLogin);
-adminRoute.post("/adminRegister", adminLogin);
+// adminRoute.post("/studentRegister", adminLogin);
+// adminRoute.post("/teacherRegister", adminLogin);
+// adminRoute.post("/adminRegister", adminLogin);
 
 export default adminRoute;
