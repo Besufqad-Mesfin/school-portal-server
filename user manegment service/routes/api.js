@@ -7,6 +7,6 @@ const api = express.Router();
 
 api.use('/student', studentRoute);
 api.use('/teacher', teacherRoute);
-api.use('admin', adminRoute);
+api.use('/admin', adminRoute);
 
 export default api;
