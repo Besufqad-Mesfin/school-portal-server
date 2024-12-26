@@ -2,10 +2,10 @@ import bcrypt from 'bcrypt';
 import { TeacherRegistrationModel } from '../../models/teacherModel.js';
 
 const registerTeacher = async (req, res) => {
-    const { name, email, password, subject } = req.body;
+    const { name, email,teacherId,educationalStatus, password, subject } = req.body;
 
     // Validate required fields
-    if (!name || !email || !password || !subject) {
+    if (!Fname || !email ||teacherId|| !password || !subject||educationalStatus) {
         return res.status(400).json({ message: 'Name, email, password, and subject are required.' });
     }
 

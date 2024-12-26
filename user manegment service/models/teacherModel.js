@@ -28,9 +28,12 @@ const UserTeacher = sequelize.define('Teachers', {
 
 
 const TeacherRegistrationModel = sequelize.define('TeacherRegistration', {
-  name: {
+  Fname: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  Lname:{
+    type: DataTypes.STRING,
   },
   email: {
     type: DataTypes.STRING,
@@ -44,6 +47,13 @@ const TeacherRegistrationModel = sequelize.define('TeacherRegistration', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  teacherId:{
+    type:DataTypes.STRING,
+    allowNull:false
+  },
+  educationalStatus:{
+    type:DataTypes.STRING
+  }
 });
 
 
