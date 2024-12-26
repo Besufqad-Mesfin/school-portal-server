@@ -1,17 +1,20 @@
-import Student from '../models/studentRegisterModel.js'; 
+import Student from '../models/studentRegisterModel.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
 const studentRegister = async (req, res) => {
-  const { name, email, grade, guardianContact, password } = req.body;
+  const { fullName, email, grade, guardianContact, password } = req.body;
 
   // Validate required fields
-  if (!name || !email || !grade || !guardianContact) {
+  if (!fullName || !email || !grade || !guardianContact) {
     return res.status(400).json({
       success: false,
-      message: 'Please fill in all required fields (name, email, grade, guardianContact).',
+      message: 'Please fill in all required fields (fullName, email, grade, guardianContact).',
     });
   }
+
+  // Split the full name into firstName and lastName
+  const [firstName, lastName] = fullName.split(' ');
 
   try {
     // Check if the email already exists
@@ -31,7 +34,8 @@ const studentRegister = async (req, res) => {
 
     // Create a new student record in the database
     const newStudent = await Student.create({
-      name,
+      firstName,
+      lastName,
       email,
       grade,
       guardianContact,
@@ -44,7 +48,9 @@ const studentRegister = async (req, res) => {
       message: 'Student registered successfully!',
       student: {
         id: newStudent.id,
-        name: newStudent.name,
+        studentId: newStudent.studentId,
+        firstName: newStudent.firstName,
+        lastName: newStudent.lastName,
         email: newStudent.email,
         grade: newStudent.grade,
         guardianContact: newStudent.guardianContact,
