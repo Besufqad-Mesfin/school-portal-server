@@ -12,10 +12,10 @@ export const loginTeacher = async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ success: false, message: 'Invalid credentials' });
+      return res.status(400).json({ success: false, message: 'Invalid password' });
     }
     
-    res.status(200).json({ success: true, message: `Welcome ${user.role}` });
+    res.status(200).json({ success: true, message: 'Login successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
