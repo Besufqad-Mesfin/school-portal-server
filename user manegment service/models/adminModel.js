@@ -1,17 +1,26 @@
-import sequelize from "../config/db";
+import sequelize from "../config/db.js";
 import { DataTypes } from "sequelize";
 
-const Admin = sequelize.define("Admin", {
+const AdminModel = sequelize.define("Admins", {
     email: {
         type: DataTypes.STRING,
         allowNull: false,
+        primaryKey: true,
     },
     password: {
         type: DataTypes.STRING,
         allowNull: false,
-    }
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
 });
 
-export default Admin;
+export default AdminModel;
 
 
