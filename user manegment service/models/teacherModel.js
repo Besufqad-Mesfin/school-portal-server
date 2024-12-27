@@ -57,7 +57,7 @@ const TeacherRegistrationModel = sequelize.define('TeacherRegistration', {
   Gender:{
     type:DataTypes.STRING
   },
-  Contact_info:{
+  Contact_no:{
     type:DataTypes.STRING
   }
 });
