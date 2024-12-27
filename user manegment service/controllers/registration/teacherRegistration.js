@@ -1,43 +1,44 @@
 import bcrypt from 'bcrypt';
-import  teacherModel from '../../models/teacherModel.js';
+import teacherModel from '../../models/teacherModel.js';
+import { Op } from 'sequelize'; // Import Sequelize operators
 
 const registerTeacher = async (req, res) => {
     const {
-        First_name,
-        Last_name,
+        firstName, // Updated to match the model's attribute
+        lastName,  // Updated to match the model's attribute
         email,
-        teacher_Id,
-        educational_Status,
+        teacherId, // Updated to match the model's attribute
+        educationalStatus, // Updated to match the model's attribute
         password,
         subject,
-        Gender,
-        Contact_no,
+        gender, // Updated to match the model's attribute
+        contactNo, // Updated to match the model's attribute
     } = req.body;
 
     // Validate required fields
     if (
-        !First_name ||
-        !Last_name ||
+        !firstName ||
+        !lastName ||
         !email ||
-        !teacher_Id ||
-        !educational_Status ||
+        !teacherId ||
+        !educationalStatus ||
         !password ||
         !subject ||
-        !Gender ||
-        !Contact_no
+        !gender ||
+        !contactNo
     ) {
         return res.status(400).json({
-            message: 'All fields are required: First_name, Last_name, email, teacher_Id, educational_Status, password, subject, Gender, and Contact_no.',
+            message: 'All fields are required: firstName, lastName, email, teacherId, educationalStatus, password, subject, gender, and contactNo.',
         });
     }
 
     try {
-        // Check if email or teacher_Id already exists
+        // Check if email or teacherId already exists
         const existingTeacher = await teacherModel.findOne({
             where: {
-                [Op.and]: [
+                [Op.or]: [ // Changed to `Op.or` to match either condition
                     { email: email },
-                    { teacher_Id: teacher_Id },
+                    { teacherId: teacherId },
                 ],
             },
         });
@@ -53,15 +54,15 @@ const registerTeacher = async (req, res) => {
 
         // Save teacher to the database
         const newTeacher = await teacherModel.create({
-            First_name,
-            Last_name,
+            firstName,       // Aligned to model
+            lastName,        // Aligned to model
             email,
-            teacher_Id,
-            educational_Status,
+            teacherId,       // Aligned to model
+            educationalStatus, // Aligned to model
             password: hashedPassword, // Save hashed password
             subject,
-            Gender,
-            Contact_no,
+            gender,          // Aligned to model
+            contactNo,       // Aligned to model
         });
 
         res.status(201).json({

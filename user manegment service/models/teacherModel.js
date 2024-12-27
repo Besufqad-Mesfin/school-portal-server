@@ -3,21 +3,21 @@ import sequelize from '../config/db.js'; // Import the initialized sequelize ins
 import { DataTypes } from 'sequelize';
 
 // Define the UserTeacher model using the imported sequelize instance
-
-// Export the model
-
-
-
 const teacherModel = sequelize.define('teacherModel', {
+  teacherId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    primaryKey: true, // Make teacherId the primary key
+  },
   firstName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  lastName:{
+  lastName: {
     type: DataTypes.STRING,
   },
-  password:{
-    type:DataTypes.STRING,
+  password: {
+    type: DataTypes.STRING,
   },
   email: {
     type: DataTypes.STRING,
@@ -31,21 +31,15 @@ const teacherModel = sequelize.define('teacherModel', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  teacherId:{
-
-    type:DataTypes.STRING,
-    allowNull:false
+  educationalStatus: {
+    type: DataTypes.STRING,
   },
-  educationalStatus:{
-    type:DataTypes.STRING
+  gender: {
+    type: DataTypes.STRING,
   },
-  gender:{
-    type:DataTypes.STRING
+  contactNo: {
+    type: DataTypes.STRING,
   },
-  contactNo:{
-    type:DataTypes.STRING
-  }
 });
 
-
-export default teacherModel ;
+export default teacherModel;
