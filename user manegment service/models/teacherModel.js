@@ -3,25 +3,43 @@ import sequelize from '../config/db.js'; // Import the initialized sequelize ins
 import { DataTypes } from 'sequelize';
 
 // Define the UserTeacher model using the imported sequelize instance
-const UserTeacher = sequelize.define('Teachers', {
+const teacherModel = sequelize.define('teacherModel', {
   teacherId: {
     type: DataTypes.STRING,
     allowNull: false,
-    primaryKey: true,    
+    primaryKey: true, // Make teacherId the primary key
   },
-  password: {
-    type: DataTypes.STRING, // Changed from INTEGER to STRING for storing hashed passwords
+  firstName: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  lastName: {
+    type: DataTypes.STRING,
   },
-  updatedAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  password: {
+    type: DataTypes.STRING,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true, // Ensure email is unique
+    validate: {
+      isEmail: true, // Validate email format
+    },
+  },
+  subject: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  educationalStatus: {
+    type: DataTypes.STRING,
+  },
+  gender: {
+    type: DataTypes.STRING,
+  },
+  contactNo: {
+    type: DataTypes.STRING,
   },
 });
 
-// Export the model
-export default UserTeacher;
+export default teacherModel;

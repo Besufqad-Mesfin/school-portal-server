@@ -6,4 +6,5 @@ const teacherRoute = express.Router();
 // POST route for login
 teacherRoute.post('/login', loginTeacher);
 
+
 export default teacherRoute;
