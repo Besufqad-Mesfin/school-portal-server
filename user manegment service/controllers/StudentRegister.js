@@ -5,17 +5,7 @@ import crypto from 'crypto';
 
 const studentRegister = async (req, res) => {
   const {
-    studentId,
-    firstName,
-    lastName,
-    email,
-    grade,
-    familyFirstName,
-    familyLastName,
-    familyContact,
-    password,
-    region,
-    kebele,
+    studentId,firstName,lastName, email,grade,familyFirstName,familyLastName,familyContact, password,region,kebele,
   } = req.body;
 
   // Validate required fields
@@ -85,4 +75,4 @@ const studentRegister = async (req, res) => {
   }
 };
 
-export { studentRegister };
+export default studentRegister ;
