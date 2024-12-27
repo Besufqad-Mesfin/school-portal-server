@@ -9,11 +9,11 @@ import { DataTypes } from 'sequelize';
 
 
 const teacherModel = sequelize.define('teacherModel', {
-  First_name: {
+  firstName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  Last_name:{
+  lastName:{
     type: DataTypes.STRING,
   },
   password:{
@@ -31,17 +31,18 @@ const teacherModel = sequelize.define('teacherModel', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  teacher_Id:{
+  teacherId:{
+
     type:DataTypes.STRING,
     allowNull:false
   },
-  educational_Status:{
+  educationalStatus:{
     type:DataTypes.STRING
   },
-  Gender:{
+  gender:{
     type:DataTypes.STRING
   },
-  Contact_no:{
+  contactNo:{
     type:DataTypes.STRING
   }
 });
