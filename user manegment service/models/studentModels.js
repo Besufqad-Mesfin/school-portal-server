@@ -49,5 +49,4 @@ const Student = sequelize.define('Student', {
     allowNull: false,
   } 
 });
-
 export default Student;
