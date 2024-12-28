@@ -12,4 +12,5 @@ adminRoute.post("/studentRegister", studentRegister);
 adminRoute.post("/teacherRegister", registerTeacher);
 adminRoute.post("/adminRegister", staffRegister);
 
+
 export default adminRoute;
