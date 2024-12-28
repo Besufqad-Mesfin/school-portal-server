@@ -17,11 +17,10 @@ export const loginTeacher = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid password' });
     }
 
-    // Send response with the token
+    // Send success response without token
     res.status(200).json({
       success: true,
       message: 'Login successful',
-      token: token,
     });
 
   } catch (error) {
