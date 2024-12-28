@@ -6,26 +6,14 @@ import TeacherModel from "../../models/teacherModels.js"; // Adjust the path to 
  */
 export async function changePassword(req, res) {
   try {
-    const { currentPassword, newPassword, confirmPassword } = req.body;
-
+    
     // Step 1: Authenticate user
     const user = await TeacherModel.findById(req.teacherId); // Fetch teacher user from the TeacherModel
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Step 2: Verify current password
-    const isMatch = await bcrypt.compare(currentPassword, user.password); // Compare hashed passwords
-    if (!isMatch) {
-      return res.status(400).json({ message: "Current password is incorrect" });
-    }
-
-    // Step 3: Confirm passwords match
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({ message: "Passwords do not match" });
-    }
-
-    // Step 4: Update password
+// Step 4: Update password
     user.password = await bcrypt.hash(newPassword, 10); // Hash the new password
     await user.save();
 

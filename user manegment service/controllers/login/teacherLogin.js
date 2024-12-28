@@ -1,6 +1,5 @@
 import UserTeacher from '../../models/teacherModel.js';
 import bcrypt from "bcryptjs"; // Import bcrypt
-import jwt from "jsonwebtoken"; // Import JWT
 
 export const loginTeacher = async (req, res) => {
   const { teacherId, password } = req.body;
