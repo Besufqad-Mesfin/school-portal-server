@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import teacherModel from '../../models/teacherModel.js';
 import { Op } from 'sequelize'; // Import Sequelize operators
 
