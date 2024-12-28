@@ -11,6 +11,30 @@ const AdminModel = sequelize.define("Admins", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    firstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    lastName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    phoneNumber: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    sex: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    educationLevel: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
