@@ -5,4 +5,5 @@ const studentRoute = express.Router();
 
 studentRoute.post('/login', studentLogin); 
 
+
 export default studentRoute;
