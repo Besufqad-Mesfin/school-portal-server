@@ -1,6 +1,6 @@
 import { Op } from 'sequelize'; // Include this line
-import Student from '../models/studentModels.js';
-import bcrypt from 'bcrypt';
+import Student from '../../models/studentModels.js';
+import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 
 const studentRegister = async (req, res) => {
