@@ -6,7 +6,7 @@ import TeacherModel from "../../models/teacherModels.js"; // Adjust the path to 
  */
 export async function changePassword(req, res) {
   try {
-    const { newPassword, confirmPassword } = req.body;
+    const { newPassword } = req.body; // Only newPassword is required since validation is done on the frontend.
 
     // Step 1: Authenticate user
     const user = await TeacherModel.findById(req.teacherId); // Fetch teacher from the TeacherModel
@@ -14,12 +14,7 @@ export async function changePassword(req, res) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Step 2: Confirm passwords match
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({ message: "Passwords do not match" });
-    }
-
-    // Step 3: Update password
+    // Step 2: Update password
     user.password = await bcrypt.hash(newPassword, 10); // Hash the new password
     await user.save();
 
