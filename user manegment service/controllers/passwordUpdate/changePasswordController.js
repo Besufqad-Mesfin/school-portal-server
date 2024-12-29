@@ -13,14 +13,14 @@ export async function changePassword(req, res) {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     // Step 2: Update password
     user.password = await bcrypt.hash(newPassword, 10); // Hash the new password
     await user.save();
-
     return res.status(200).json({ message: "Password updated successfully!" });
   } catch (error) {
     console.error("Error updating password:", error);
     return res.status(500).json({ message: "Internal server error" });
+
   }
+  
 }
