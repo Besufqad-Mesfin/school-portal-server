@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import TeacherModel from "../../models/teacherModels.js"; // Adjust the path to your Teacher model
 
 /**
