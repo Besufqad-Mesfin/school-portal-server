@@ -1,6 +1,6 @@
 import express from 'express';
 import { loginTeacher } from '../controllers/login/teacherLogin.js'; // Adjust the path if necessary
-import { changePassword } from '../controllers/passwordUpdate/changePasswordController.js';
+import { changePassword } from '../controllers/passwordChange/teacherPasswordChange.js';
 
 const teacherRoute = express.Router();
 
