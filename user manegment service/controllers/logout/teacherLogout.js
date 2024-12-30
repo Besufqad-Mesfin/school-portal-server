@@ -1,18 +1,14 @@
-import teacherModel from "../../models/teacherModel";
+import teacherModel from "../../models/teacherModel.js";
 
 export const teacherLogout = async (req, res) => {
   try {
-    const teacherId = req.body;
+    const { teacherId } = req.body;
 
-    const teacher= await teacherModel.findOne({ where: { teacherId } });
-    if (!teacherId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Teacher  is not found" });
-    }
-    teacher.isloggedIn = false;
-    await teacher.save();
-    
+    // Find the teacher in the database to verify if they exist
+    const teacher = await teacherModel.findOne({ where: { teacherId } });
+ // Clear the token from cookies
+    res.clearCookie("token"); // Assuming the token is stored in a cookie named "token"
+
     res.status(200).json({ success: true, message: "Logout successful" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

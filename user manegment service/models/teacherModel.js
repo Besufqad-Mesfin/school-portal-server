@@ -40,10 +40,7 @@ const teacherModel = sequelize.define("teacherModel", {
   contactNo: {
     type: DataTypes.STRING,
   },
-  isLoggedIn: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false, // Default to false (logged out)
-  },
+ 
 });
 
 export default teacherModel;
