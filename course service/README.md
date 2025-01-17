@@ -1,13 +1,14 @@
-# report-service
+# course-management-service
 
-This microservice manages the generation and distribution of school reports.
+This microservice manages the creation, modification, and administration of courses within the school portal.
 
 ## Features
 
-- Report generation for students
-- Grading summaries
-- Attendance-related reports
-- Notifications and alerts for completed reports
+- Course creation and editing
+- Assignment of teachers to courses
+- Student enrollment management
+- Course scheduling
+- Notifications and alerts for course updates
 
 ## Technologies Used
 
@@ -15,7 +16,6 @@ This microservice manages the generation and distribution of school reports.
 - Express.js
 - MongoDB
 - JWT for authentication
-- RESTful API
 
 ## Setup
 
@@ -23,9 +23,9 @@ This microservice manages the generation and distribution of school reports.
     ```bash
     git clone https://github.com/Besufqad-Mesfin/school-portal-server.git
     ```
-2. Navigate to the report-service directory:
+2. Navigate to the course-management-service directory:
     ```bash
-    cd report-service
+    cd course-management-service
     ```
 3. Install dependencies:
     ```bash
