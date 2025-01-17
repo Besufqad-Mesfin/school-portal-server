@@ -1,55 +1,37 @@
-# school-portal-server
+# User manegment service
 
-This project is a backend server for a school portal application. It provides various functionalities to manage students, teachers, courses, and other school-related activities. 
+A microservice for the school's portal system. It handles user creation, authentication, roles, and permissions within the school's broader platform.
 
 ## Features
+- Authentication and authorization
+- Role-based access control
+- Student/teacher account management
+- Integration with other school microservices
 
-- User authentication and authorization
-- Student and teacher management
-- Course management
-- Grade tracking
-- Attendance tracking
-- Notifications and announcements
-
-## Technologies Used
-
-- Node.js
-- Express.js
+## Technologies
+- Node.js & Express.js
 - MongoDB
-- JWT for authentication
-- RESTful API
+- JWT
+- RESTful APIs
 
 ## Setup
-
-To run this project locally, follow these steps:
-
-1. Clone the repository:
+1. Clone the repo:
     ```bash
     git clone https://github.com/Besufqad-Mesfin/school-portal-server.git
     ```
-2. Navigate to the project directory:
+2. Install dependencies:
     ```bash
-    cd school-portal-server
-    ```
-3. Install dependencies:
-    ```bash
+    cd school-portal-server/user\ manegment\ service
     npm install
     ```
-4. Create a `.env` file and add the necessary environment variables:
-    ```env
-    PORT=3000
-    MONGO_URI=your_mongodb_connection_string
-    JWT_SECRET=your_secret_key
-    ```
-5. Start the server:
+3. Set env variables in a .env file
+4. Start the microservice:
     ```bash
     npm start
     ```
 
 ## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request.
+Contributions are always welcome.
 
 ## License
-
-This project is licensed under the MIT License.
+Licensed under MIT.
