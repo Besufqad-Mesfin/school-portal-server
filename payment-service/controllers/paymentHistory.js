@@ -12,7 +12,6 @@ exports.getPayments = async (req, res) => {
             if (endDate) query.createdAt.$lte = new Date(endDate);
         }
         if (status) query.status = status;
-
         const payments = await Payment.find(query);
         res.status(200).json(payments);
     } catch (error) {

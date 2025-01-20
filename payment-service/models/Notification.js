@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import sequelize from "../config/db.js";
+import { DataTypes } from "sequelize";
 
-const notificationSchema = new mongoose.Schema({
+const notificationSchema = sequelize.define({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     message: { type: String, required: true },
     type: { type: String, required: true }, // e.g., 'reminder', 'alert'
