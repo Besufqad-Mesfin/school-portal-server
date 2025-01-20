@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
+import sequelize from "../config/db.js";
+import { DataTypes } from "sequelize";
 const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
+const userSchema = sequelize.define({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ['member', 'librarian'], default: 'member' }

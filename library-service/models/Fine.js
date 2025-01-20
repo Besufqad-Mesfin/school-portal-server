@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import sequelize from "../config/db.js";
+import { DataTypes } from "sequelize";
 
-const fineSchema = new mongoose.Schema({
+const fineSchema = sequelize.define({
     transactionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Transaction', required: true },
     amount: { type: Number, required: true },
     paid: { type: Boolean, default: false },

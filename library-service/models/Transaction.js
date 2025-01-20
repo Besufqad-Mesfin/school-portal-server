@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import sequelize from "../config/db.js";
+import { DataTypes } from "sequelize";
 
-const transactionSchema = new mongoose.Schema({
+const transactionSchema = sequelize.define({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     bookId: { type: mongoose.Schema.Types.ObjectId, ref: 'Book', required: true },
     dateBorrowed: { type: Date, default: Date.now },

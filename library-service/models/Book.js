@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
+import sequelize from "../config/db.js";
+import { DataTypes } from "sequelize";
 
-const bookSchema = new mongoose.Schema({
+const bookSchema =sequelize.define({
     title: { type: String, required: true },
     author: { type: String, required: true },
     isbn: { type: String, required: true, unique: true },
