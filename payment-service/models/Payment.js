@@ -1,3 +1,6 @@
+import sequelize from "../config/db.js";
+import { DataTypes } from "sequelize";
+
 const mongoose = require('mongoose');
 
 const paymentSchema = new mongoose.Schema({
