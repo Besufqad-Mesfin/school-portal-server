@@ -7,7 +7,7 @@ import sequelize from './config/db.js';  // Import sequelize from db.js
 dotenv.config();
 
 // Set the port from environment variables or default to 5000
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 
 // Initialize the express application
 const app = express();
