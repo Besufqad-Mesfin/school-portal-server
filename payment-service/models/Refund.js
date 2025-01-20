@@ -1,9 +1,7 @@
 import sequelize from "../config/db.js";
 import { DataTypes } from "sequelize";
 
-const mongoose = require('mongoose');
-
-const refundSchema = new mongoose.Schema({
+const refundSchema = sequelize.define({
     paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment', required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     amount: { type: Number, required: true },
