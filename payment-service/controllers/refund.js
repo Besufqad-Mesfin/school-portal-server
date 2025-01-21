@@ -1,22 +1,20 @@
-const Payment = require('../models/Payment');
-const Refund = require('../models/Refund');
+import { Refund } from '../models/refund.js'; // Ensure correct import
 
-exports.requestRefund = async (req, res) => {
+export const requestRefund = async (req, res) => {
     const { paymentId } = req.body;
 
     try {
-        const payment = await Payment.findById(paymentId);
+        const payment = await Payment.findByPk(paymentId); // Use findByPk for Sequelize
         if (!payment || payment.status !== 'completed') {
             return res.status(400).json({ message: 'Invalid refund request' });
         }
 
-        const refund = new Refund({
+        const refund = await Refund.create({
             paymentId,
-            userId: payment.userId,
+            studentId: payment.userId,
             amount: payment.amount,
             status: 'pending'
         });
-        await refund.save();
 
         payment.status = 'refunded'; // Update status in Payment
         await payment.save();

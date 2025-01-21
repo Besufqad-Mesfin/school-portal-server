@@ -1,12 +1,33 @@
-import sequelize from "../config/db.js";
-import { DataTypes } from "sequelize";
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/db.js';
 
-const refundSchema = sequelize.define({
-    paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment', required: true },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    amount: { type: Number, required: true },
-    status: { type: String, default: 'pending' }, // e.g., 'pending', 'processed'
-    createdAt: { type: Date, default: Date.now }
+const Refund = sequelize.define('Refund', {
+    paymentId: {
+        type: DataTypes.INTEGER, // Adjust according to your Payment model ID type
+        allowNull: false,
+        references: {
+            model: 'refund', // Ensure this matches the name of your Payment model
+            key: 'id',
+        },
+    },
+    userId: {
+        type: DataTypes.INTEGER, // Adjust according to your User model ID type
+        allowNull: false,
+    },
+    amount: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+    },
+    status: {
+        type: DataTypes.STRING,
+        defaultValue: 'pending', // e.g., 'pending', 'processed'
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW,
+    },
+}, {
+    timestamps: false, // Set to true if you want 'createdAt' and 'updatedAt' fields
 });
 
-module.exports = mongoose.model('Refund', refundSchema);
+export default Refund;
