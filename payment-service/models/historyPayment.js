@@ -2,7 +2,7 @@ import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/db.js'; // Ensure this points to your database configuration
 
 const Payment = sequelize.define('Payment', {
-    userId: {
+    studentId: {
         type: DataTypes.STRING, // Adjust type according to your User ID type
         allowNull: false,
         references: {

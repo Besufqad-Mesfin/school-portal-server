@@ -1,12 +1,12 @@
 import Payment from '../models/historyPayment.js'; // Ensure the path and extension are correct
 
 const getPayments = async (req, res) => {
-    const userId = req.user.id;
+    const studentId = req.user.id;
     const { startDate, endDate, status } = req.query;
 
     try {
         const query = {
-            where: { userId },
+            where: { studentId },
         };
 
         if (startDate || endDate) {
