@@ -2,30 +2,24 @@ import Payment from '../models/verificationPayment.js'; // Ensure the path and e
 import paymentProcessorAPI from '../services/paymentProcessorAPI.js'; // Hypothetical API service
 
 export const verifyPayment = async (req, res) => {
-    const { studentId } = req.body;
-
+    const { paymentId } = req.body;
+           // it will be foreing key of studentId
     try {
-        const payment = await Payment.findByPk(studentId); // Use findByPk for Sequelize
+        const payment = await Payment.findByPk(paymentId); // Use findByPk for Sequelize
         if (!payment) {
             return res.status(404).json({ message: 'Payment not found' });
         }
 
         // Call the external payment processor API to verify payment status
-        const verificationResponse = await paymentProcessorAPI.verifyPayment(studentId);
-
+        const verificationResponse = await paymentProcessorAPI.verifyPayment(paymentId);
+        
         // Check the response from the payment processor
-        switch (verificationResponse.status) {
-            case 'successful':
-                payment.status = 'completed';
-                break;
-            case 'pending':
-                payment.status = 'pending';
-                break;
-            case 'failed':
-                payment.status = 'failed';
-                break;
-            default:
-                payment.status = 'unknown';
+        if (verificationResponse.status === 'successful') {
+            payment.status = 'completed';
+        } else if (verificationResponse.status === 'pending') {
+            payment.status = 'pending';
+        } else {
+            payment.status = 'failed';
         }
 
         await payment.save();

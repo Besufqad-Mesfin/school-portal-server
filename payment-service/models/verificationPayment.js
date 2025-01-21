@@ -2,11 +2,11 @@ import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/db.js'; // Ensure this points to your database configuration
 
 const Payment = sequelize.define('Payment', {
-    studentId: {
+    userId: {
         type: DataTypes.INTEGER, // Adjust type according to your User ID type
         allowNull: false,
         references: {
-            model: 'Users', // Ensure this matches the User model name
+            model: 'studentModels', // Ensure this matches the User model name
             key: 'id',
         },
     },
