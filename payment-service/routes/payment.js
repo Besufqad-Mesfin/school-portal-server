@@ -4,6 +4,6 @@ import authMiddleware from '../middlewares/authMiddleware.js';
 
 const makePayment = express.Router();
 
-paymentRouter.post('/payments', authMiddleware, createPayment); 
+makePayment.post('/payments', authMiddleware, createPayment); 
 
 export default makePayment;
