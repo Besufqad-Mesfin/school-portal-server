@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import api from './routes/historyPayment.js';
+import api from './routes/api.js';
 import sequelize from './config/db.js';  // Import sequelize from db.js
 
 // Load environment variables from .env file

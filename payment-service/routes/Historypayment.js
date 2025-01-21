@@ -5,7 +5,5 @@ import authMiddleware from '../middlewares/authMiddleware.js';
 const historyPayment = express.Router();
 
 historyPayment.get('/history', authMiddleware, getPayments); 
- /// its get the history may be payment table history maynot be exists
+
 export default historyPayment;
-
-

@@ -6,9 +6,8 @@ const Payment = sequelize.define('Payment', {
         type: DataTypes.STRING, // Adjust type according to your User ID type
         allowNull: false,
         references: {
-            model: 'Users', // Ensure this matches the User model name,  it can ensure that any 
-            // userId in the Payment model must correspond to an existing id in the Users model.
-            key: 'id', //identifies the specific column in the referenced model that is being pointed to
+            model: 'studentModels', // Ensure this matches the User model name
+            key: 'id', // Identifies the specific column in the referenced model
         },
     },
     amount: {

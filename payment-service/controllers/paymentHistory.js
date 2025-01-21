@@ -1,4 +1,5 @@
-import Payment from '../models/historyPayment.js'; // Ensure the path and extension are correct
+import Payment from '../models/historyPaymentModels.js'; // Ensure the path and extension are correct
+import { Op } from 'sequelize'; // Import Op for query operators
 
 const getPayments = async (req, res) => {
     const studentId = req.user.id;
@@ -23,4 +24,4 @@ const getPayments = async (req, res) => {
     }
 };
 
-export {getPayments};
+export { getPayments };
