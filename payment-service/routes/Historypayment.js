@@ -1,9 +1,11 @@
 import express from 'express';
-import { getPayments } from '../controllers/payment/getPayments.js'; // Ensure this matches exactly
+import { getPayments } from '../controllers/paymentHistory.js'; // Ensure this matches exactly
 import authMiddleware from '../middlewares/authMiddleware.js';
 
-const paymentRouter = express.Router();
+const historyPayment = express.Router();
 
-paymentRouter.get('/payments', authMiddleware, getPayments); 
+historyPayment.get('/history', authMiddleware, getPayments); 
+ /// its get the history may be payment table history maynot be exists
+export default historyPayment;
 
-export default paymentRouter;
+
