@@ -1,14 +1,15 @@
-const Payment = require('../models/Payment');
+import Payment from '../models/Payment.js'; // Ensure the path and extension are correct
 
-exports.createPayment = async (req, res) => {
+const createPayment = async (req, res) => {
     const { amount, currency, type } = req.body;
     const userId = req.user.id;
 
     try {
-        const payment = new Payment({ userId, amount, currency, type });
-        await payment.save();
+        const payment = await Payment.create({ userId, amount, currency, type });
         res.status(201).json(payment);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
+export  {createPayment};

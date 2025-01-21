@@ -1,12 +1,37 @@
-const mongoose = require('mongoose');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/db.js'; // Ensure this points to your database configuration
 
-const paymentSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    amount: { type: Number, required: true },
-    currency: { type: String, required: true },
-    status: { type: String, default: 'pending' },
-    type: { type: String, required: true }, // e.g., Tuition, Extracurricular
-    createdAt: { type: Date, default: Date.now }
+const Payment = sequelize.define('Payment', {
+    studentId: {
+        type: DataTypes.STRING, // Adjust type according to your User ID type
+        allowNull: false,
+        references: {
+            model: 'Users', // Ensure this matches the User model name
+            key: 'id',
+        },
+    },
+    amount: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+    },
+    currency: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    status: {
+        type: DataTypes.STRING,
+        defaultValue: 'pending',
+    },
+    type: {
+        type: DataTypes.STRING,
+        allowNull: false, // e.g., Tuition, Extracurricular
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW,
+    },
+}, {
+    timestamps: false, // Set to true if you want createdAt and updatedAt fields
 });
 
-module.exports = mongoose.model('Payment', paymentSchema);
+export default Payment;

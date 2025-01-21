@@ -1,18 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const createPayment = require('../payment/createPayment');
-const paymentHistory = require('../payment/paymentHistory');
-const paymentVerification = require('../payment/paymentVerification');
-const refund = require('../payment/refund');
-const reminder = require('../payment/reminder');
-const receipt = require('../payment/receipt');
-const authMiddleware = require('../middlewares/authMiddleware');
+import express from 'express';
+import { createPayment } from '../controllers/payment/createPayment.js'; // Ensure this matches exactly
+import authMiddleware from '../middlewares/authMiddleware.js';
 
-router.post('/payments', authMiddleware, createPayment.createPayment);
-router.get('/payments', authMiddleware, paymentHistory.getPayments);
-router.post('/verify', authMiddleware, paymentVerification.verifyPayment);
-router.post('/refund', authMiddleware, refund.requestRefund);
-router.get('/reminders', authMiddleware, reminder.sendPaymentReminders);
-router.get('/receipt/:paymentId', authMiddleware, receipt.generateReceipt);
+const paymentRouter = express.Router();
 
-module.exports = router;
+paymentRouter.post('/payments', authMiddleware, createPayment); 
+
+export default paymentRouter;
