@@ -1,9 +1,10 @@
 import express from 'express';
-import historyPayment from './historyPayment.js'; // Ensure this matches exactly
+import paymentHistoryRouter from './paymentHistory.js'; // Import payment history routes
 
 const api = express.Router();
 
-// Use the historyPayment router for '/payments' route
-api.use('/payments', historyPayment);
+
+// Integrate payment history routes
+api.use('/payments', paymentHistoryRouter);
 
 export default api;
