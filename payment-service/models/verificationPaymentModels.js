@@ -1,12 +1,13 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import sequelize from '../config/db.js'; // Ensure this points to your database configuration
+import sequelize from '../config/db.js'; // Import the database connection
 
+// Define the Payment model
 const Payment = sequelize.define('Payment', {
-    userId: {
-        type: DataTypes.INTEGER, // Adjust type according to your User ID type
+    studentId: {
+        type: DataTypes.STRING,
         allowNull: false,
         references: {
-            model: 'studentModels', // Ensure this matches the User model name
+            model: 'studentModels', // Reference the student model
             key: 'id',
         },
     },
@@ -20,18 +21,18 @@ const Payment = sequelize.define('Payment', {
     },
     status: {
         type: DataTypes.STRING,
-        defaultValue: 'pending',
+        defaultValue: 'pending', // Default status is 'pending'
     },
     type: {
         type: DataTypes.STRING,
-        allowNull: false, // e.g., Tuition, Extracurricular
+        allowNull: false,
     },
     createdAt: {
         type: DataTypes.DATE,
         defaultValue: Sequelize.NOW,
     },
 }, {
-    timestamps: false, // Set to true if you want createdAt and updatedAt fields
+    timestamps: false, // Disable automatic timestamps
 });
 
-export default Payment;
+export default Payment; // Export the model

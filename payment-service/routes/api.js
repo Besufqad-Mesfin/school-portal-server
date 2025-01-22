@@ -1,7 +1,7 @@
 import express from 'express';
-import paymentVerify from './verficationPayment';
 const api = express.Router();
 
-api.use('/payment', paymentVerify);
 
+// Integrate payment verification routes
+api.use('/payments', paymentVerificationRouter);
 export default api;
