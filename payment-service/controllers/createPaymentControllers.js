@@ -1,4 +1,4 @@
-import Payment from '../models/createPaymentModels.js'; 
+import Payment from '../models/mockPaymentModels.js';  // Ensure the path is correct
 
 const createPayment = async (req, res) => {
     const { amount, currency, type } = req.body;
