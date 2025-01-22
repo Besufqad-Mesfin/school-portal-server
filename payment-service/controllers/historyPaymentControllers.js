@@ -1,43 +1,40 @@
 import Payment from '../models/historyPaymentModels.js'; // Import the Payment model
 
-/**
- * Controller to retrieve the payment history for a student.
- * Allows filtering by date range and status.
- */
+// Function to get a student's payment history
 const getPaymentHistory = async (req, res) => {
-    const studentId = req.user.id; // Get the authenticated student's ID from the request
-    const { startDate, endDate, status } = req.query; // Extract optional filters from query parameters
+    const studentId = req.user.id; // Get the student's ID from the request
+    const { startDate, endDate, status } = req.query; // Get filters like date range or status from the URL
 
     try {
-        // Build a dynamic filter object for the query
+        // Set up rules for finding payments
         const filter = {
-            studentId, // Only retrieve payments for the authenticated student
+            studentId, // Find only payments for this student
         };
 
-        // Add date range filter if provided
+        // If the user gives a start and end date, add them as a rule
         if (startDate && endDate) {
             filter.createdAt = {
-                $between: [new Date(startDate), new Date(endDate)],
+                $between: [new Date(startDate), new Date(endDate)], // Between the start and end dates
             };
         }
 
-        // Add status filter if provided
+        // If the user gives a status (like "completed"), add it as a rule
         if (status) {
             filter.status = status;
         }
 
-        // Query the database for payment history based on the filter
+        // Get the payments that match these rules from the database
         const payments = await Payment.findAll({
-            where: filter, // Apply the dynamic filter
-            order: [['createdAt', 'DESC']], // Order by most recent payments first
+            where: filter, // Apply the rules we made
+            order: [['createdAt', 'DESC']], // Sort payments from newest to oldest
         });
 
-        // Respond with the retrieved payment records
+        // Send the found payments back to the user
         res.status(200).json(payments);
     } catch (error) {
-        // Handle any errors and respond with an error message
+        // If something goes wrong, send an error message
         res.status(500).json({ message: error.message });
     }
 };
 
-export { getPaymentHistory }; // Export the controller function
+export { getPaymentHistory }; // Export this function so it can be used elsewhere
