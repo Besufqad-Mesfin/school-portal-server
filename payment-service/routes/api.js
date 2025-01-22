@@ -1,8 +1,9 @@
 import express from 'express';
-import refundPayment from './refundPayment.js';
+import refundRouter from './refund.js'; // Refund routes
 
 const api = express.Router();
 
-api.use('/payment', refundPayment);
+// Integrate routes
+api.use('/refunds', refundRouter); // Refund-related routes
 
 export default api;

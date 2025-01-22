@@ -1,11 +1,10 @@
-
 import express from 'express';
-import { requestRefund } from '../controllers/refund.js'; // Adjust the path accordingly
-import authMiddleware from '../middlewares/authMiddleware.js';
+import { requestRefund } from '../controllers/refundPaymentControllers.js'; // Import controller
+import authMiddleware from '../middlewares/authMiddleware.js'; // Import authentication middleware
 
-const refundPayment = express.Router();
+const refundRouter = express.Router();
 
-// Route for processing refund requests
-refundPayment.post('/refund', authMiddleware, requestRefund);
+// POST route to request a refund
+refundRouter.post('/request', authMiddleware, requestRefund);
 
-export default refundPayment;
+export default refundRouter; // Export the router
