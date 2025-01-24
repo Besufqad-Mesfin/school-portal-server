@@ -1,6 +1,6 @@
-import Transaction from '../models/Transaction.js';
-import Book from '../models/Book.js';
-import User from '../models/User.js';
+import Transaction from '../models/transactionModels.js';
+import Book from '../models/bookModels.js';
+import User from '../models/userModels.js';
 
 export const generateUsageReports = async (req, res) => {
     try {

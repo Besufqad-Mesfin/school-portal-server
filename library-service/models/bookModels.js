@@ -1,16 +1,32 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.js';
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/db.js'; // Import the Sequelize instance
 
-const bookModels = sequelize.define('Book', {
+// Define the Book model
+const Book = sequelize.define('Book', {
     title: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.STRING, // Title of the book
+        allowNull: false, // Title cannot be null
     },
     author: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.STRING, // Author of the book
+        allowNull: false, // Author cannot be null
     },
-    // Additional fields if necessary
+    isbn: {
+        type: DataTypes.STRING, // ISBN number
+        allowNull: false, // ISBN cannot be null
+        unique: true, // ISBN must be unique
+    },
+    availableCopies: {
+        type: DataTypes.INTEGER, // Number of available copies
+        defaultValue: 1, // Default available copies
+    },
+    totalCopies: {
+        type: DataTypes.INTEGER, // Total copies of the book
+        allowNull: false, // Total copies cannot be null
+    },
+}, {
+    timestamps: true, // Enable timestamps for createdAt and updatedAt
 });
 
-export default bookModels;
+// Export the Book model
+export default Book;
