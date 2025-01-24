@@ -1,11 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const fineController = require('../controllers/fineController');
-const authMiddleware = require('../middlewares/authMiddleware');
+import express from 'express'; // Import Express
+import * as fineController from '../controllers/fineController.js'; // Import fine controller
+import authMiddleware from '../middlewares/authMiddleware.js'; // Import authentication middleware
+
+const fineRoutes = express.Router(); // Create a new router
 
 // Fine routes
-router.post('/calculate', authMiddleware, fineController.calculateFines);
-router.get('/', authMiddleware, fineController.viewFines);
-router.post('/pay', authMiddleware, fineController.payFines);
+fineRoutes.post('/calculate', authMiddleware, fineController.calculateFines);
+fineRoutes.get('/', authMiddleware, fineController.viewFines);
+fineRoutes.post('/pay', authMiddleware, fineController.payFines);
 
-module.exports = router;
+export default fineRoutes; // Export the router
