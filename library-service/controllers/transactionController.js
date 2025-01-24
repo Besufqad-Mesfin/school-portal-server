@@ -1,16 +1,14 @@
-const Transaction = require('../models/Transaction');
+const Transaction = require('../models/transactionModels');
 const Book = require('../models/Book');
 
 exports.borrowBook = async (req, res) => {
     const { bookId } = req.body;
     const userId = req.user.id;
-
     try {
         const book = await Book.findById(bookId);
         if (!book || book.availableCopies < 1) {
             return res.status(400).json({ message: 'Book not available for borrowing' });
         }
-
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + 14); // 2 weeks from now
 
