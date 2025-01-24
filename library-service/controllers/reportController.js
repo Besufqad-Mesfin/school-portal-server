@@ -1,12 +1,12 @@
-const Transaction = require('../models/Transaction');
-const Book = require('../models/Book');
-const User = require('../models/User');
+import Transaction from '../models/Transaction.js';
+import Book from '../models/Book.js';
+import User from '../models/User.js';
 
-exports.generateUsageReports = async (req, res) => {
+export const generateUsageReports = async (req, res) => {
     try {
-        const totalTransactions = await Transaction.countDocuments();
-        const totalBooks = await Book.countDocuments();
-        const totalUsers = await User.countDocuments();
+        const totalTransactions = await Transaction.count();
+        const totalBooks = await Book.count();
+        const totalUsers = await User.count();
 
         res.status(200).json({
             totalTransactions,
@@ -18,14 +18,18 @@ exports.generateUsageReports = async (req, res) => {
     }
 };
 
-exports.viewPopularBooks = async (req, res) => {
+export const viewPopularBooks = async (req, res) => {
     try {
-        const popularBooks = await Transaction.aggregate([
-            { $group: { _id: '$bookId', count: { $sum: 1 } } },
-            { $sort: { count: -1 } },
-            { $limit: 5 }, // Get top 5 popular books
-            { $lookup: { from: 'books', localField: '_id', foreignField: '_id', as: 'bookDetails' } }
-        ]);
+        const popularBooks = await Transaction.findAll({
+            attributes: ['bookId', [sequelize.fn('COUNT', sequelize.col('bookId')), 'count']],
+            group: ['bookId'],
+            order: [[sequelize.fn('COUNT', sequelize.col('bookId')), 'DESC']],
+            limit: 5,
+            include: [{
+                model: Book,
+                attributes: ['id', 'title', 'author'] // Include necessary book details
+            }]
+        });
 
         res.status(200).json(popularBooks);
     } catch (error) {
@@ -33,11 +37,16 @@ exports.viewPopularBooks = async (req, res) => {
     }
 };
 
-exports.monitorStudentActivity = async (req, res) => {
+export const monitorStudentActivity = async (req, res) => {
     const userId = req.user.id;
-//some 
     try {
-        const transactions = await Transaction.find({ userId }).populate('bookId');
+        const transactions = await Transaction.findAll({
+            where: { userId },
+            include: [{
+                model: Book,
+                attributes: ['id', 'title']
+            }]
+        });
         res.status(200).json(transactions);
     } catch (error) {
         res.status(500).json({ message: error.message });
