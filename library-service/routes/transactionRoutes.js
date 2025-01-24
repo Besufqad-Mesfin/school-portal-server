@@ -1,12 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const transactionController = require('../controllers/transactionController');
-const authMiddleware = require('../middlewares/authMiddleware');
+import express from 'express'; // Import Express
+import * as transactionController from '../controllers/transactionController.js'; // Import transaction controller
+import authMiddleware from '../middlewares/authMiddleware.js'; // Import authentication middleware
+
+const transactionRoutes = express.Router(); // Create a new router
 
 // Transaction routes
-router.post('/borrow', authMiddleware, transactionController.borrowBook);
-router.post('/return', authMiddleware, transactionController.returnBook);
-router.get('/borrowed', authMiddleware, transactionController.viewBorrowedBooks);
-router.post('/overdue-notifications', authMiddleware, transactionController.sendOverdueNotifications);
+transactionRoutes.post('/borrow', authMiddleware, transactionController.borrowBook);
+transactionRoutes.post('/return', authMiddleware, transactionController.returnBook);
+transactionRoutes.get('/borrowed', authMiddleware, transactionController.viewBorrowedBooks);
 
-module.exports = router;
+export default transactionRoutes; // Export the router

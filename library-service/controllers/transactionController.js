@@ -1,22 +1,23 @@
-const Transaction = require('../models/transactionModels');
-const Book = require('../models/Book');
+import Transaction from '../models/transactionModels.js'; // Import the Transaction model
+import Book from '../models/bookModels.js'; // Import the Book model
 
-exports.borrowBook = async (req, res) => {
+export const borrowBook = async (req, res) => {
     const { bookId } = req.body;
-    const userId = req.user.id;
+    const studentId = req.user.id; // Changed userId to studentId
+
     try {
-        const book = await Book.findById(bookId);
+        const book = await Book.findByPk(bookId);
         if (!book || book.availableCopies < 1) {
             return res.status(400).json({ message: 'Book not available for borrowing' });
         }
+
         const dueDate = new Date();
         dueDate.setDate(dueDate.getDate() + 14); // 2 weeks from now
 
-        const transaction = new Transaction({ userId, bookId, dueDate });
-        await transaction.save();
+        const transaction = await Transaction.create({ studentId, bookId, dueDate }); // Create transaction
 
         book.availableCopies -= 1; // Decrease available copies
-        await book.save();
+        await book.save(); // Save updated book
 
         res.status(201).json(transaction);
     } catch (error) {
@@ -24,21 +25,21 @@ exports.borrowBook = async (req, res) => {
     }
 };
 
-exports.returnBook = async (req, res) => {
+export const returnBook = async (req, res) => {
     const { transactionId } = req.body;
 
     try {
-        const transaction = await Transaction.findById(transactionId);
+        const transaction = await Transaction.findByPk(transactionId);
         if (!transaction) {
             return res.status(404).json({ message: 'Transaction not found' });
         }
 
-        transaction.returnDate = new Date();
-        await transaction.save();
+        transaction.returnDate = new Date(); // Set return date
+        await transaction.save(); // Save updated transaction
 
-        const book = await Book.findById(transaction.bookId);
+        const book = await Book.findByPk(transaction.bookId);
         book.availableCopies += 1; // Increase available copies
-        await book.save();
+        await book.save(); // Save updated book
 
         res.status(200).json(transaction);
     } catch (error) {
@@ -46,17 +47,17 @@ exports.returnBook = async (req, res) => {
     }
 };
 
-exports.viewBorrowedBooks = async (req, res) => {
-    const userId = req.user.id;
+export const viewBorrowedBooks = async (req, res) => {
+    const studentId = req.user.id; // Changed userId to studentId
 
     try {
-        const transactions = await Transaction.find({ userId, returnDate: null }).populate('bookId');
+        const transactions = await Transaction.findAll({
+            where: { studentId, returnDate: null },
+            include: [{ model: Book }] // Include book details in response
+        });
         res.status(200).json(transactions);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-exports.sendOverdueNotifications = async (req, res) => {
-    // Logic to send notifications for overdue books
-};
