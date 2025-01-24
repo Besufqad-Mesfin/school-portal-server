@@ -1,22 +1,25 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/db.js'; // Import the Sequelize instance
 
-const userSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    role: { type: String, enum: ['member', 'librarian'], default: 'member' }
+// Define the User model
+const User = sequelize.define('User', {
+    username: {
+        type: DataTypes.STRING, // Username of the user
+        allowNull: false, // Username cannot be null
+        unique: true, // Username must be unique
+    },
+    idNumber: {
+        type: DataTypes.STRING, // ID number of the user
+        allowNull: false, // ID number cannot be null
+        unique: true, // ID number must be unique
+    },
+    role: {
+        type: DataTypes.ENUM('member', 'librarian'), // Role of the user
+        defaultValue: 'member', // Default role is 'member'
+    },
+}, {
+    timestamps: true, // Enable timestamps for createdAt and updatedAt
 });
 
-// Hash password before saving
-userSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 10);
-    next();
-});
-
-// Method to compare password
-userSchema.methods.comparePassword = function(password) {
-    return bcrypt.compare(password, this.password);
-};
-
-module.exports = mongoose.model('User', userSchema);
+// Export the User model
+export default User;

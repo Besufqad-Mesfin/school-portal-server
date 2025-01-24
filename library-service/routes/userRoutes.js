@@ -1,11 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const userController = require('../controllers/userController');
+import express from 'express'; // Import Express
+import { registerStudent, getStudentHistory } from '../controllers/userControllers.js'; // Import user controller
+import authMiddleware from '../middlewares/authMiddleware.js'; // Import authentication middleware
 
-// User routes
-router.post('/register', userController.registerStudent);
-router.post('/login', userController.loginUser);
-router.get('/history', authMiddleware, userController.getStudentHistory);
-router.post('/block', authMiddleware, userController.blockStudent);
+const userRoutes = express.Router(); // Create a new router
 
-module.exports = router;
+// Define user routes
+userRoutes.post('/register', registerStudent); // Route to register a new student
+userRoutes.get('/history', authMiddleware, getStudentHistory); // Route to get student transaction history
+
+export default userRoutes; // Export the router
