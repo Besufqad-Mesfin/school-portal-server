@@ -3,11 +3,7 @@ import sequelize from '../config/db.js';
 const Payment = sequelize.define('Payment', {
     studentId: {
         type: DataTypes.STRING, 
-        allowNull: false, 
-        references: {
-            model: 'studentModels', // The name of the model it's referencing (students)
-            key: 'id', // The field in the referenced model (students) to link with
-        },
+        allowNull: false,
     },
     amount: {
         type: DataTypes.FLOAT, 
