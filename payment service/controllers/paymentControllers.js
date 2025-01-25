@@ -1,8 +1,7 @@
 import Payment from '../models/paymentModels';  // Ensure the path is correct
 
 const createPayment = async (req, res) => {
-    const { amount, currency, type } = req.body;
-    const studentId = req.user.id; // Access the authenticated student's ID from the middleware
+    const {studentId, amount, currency, type } = req.body;
 
     try {
         // new payment record in the database
