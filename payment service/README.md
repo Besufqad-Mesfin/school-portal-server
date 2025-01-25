@@ -44,3 +44,39 @@ Open an issue or submit a pull request to contribute to the project.
 
 License
 This project is licensed under the MIT License.
+
+
+
+/payment-service
+│
+├── /controllers
+│   ├── createPaymentController.js
+│   ├── paymentHistoryController.js
+│   ├── paymentVerificationController.js
+│   ├── refundController.js
+│   ├── reminderController.js
+│   ├── receiptController.js
+│
+├── /middlewares
+│   ├── authMiddleware.js
+│   └── index.js
+│
+├── /models
+│   ├── createPaymentModel.js
+│   ├── historyPaymentModel.js
+│   ├── verificationPaymentModel.js
+│   ├── refundPaymentModel.js
+│   ├── reminderPaymentModel.js
+│   └── receiptPaymentModel.js
+│
+├── /routes
+│   ├── createPaymentRoutes.js
+│   ├── paymentHistoryRoutes.js
+│   ├── paymentVerificationRoutes.js
+│   ├── refundRoutes.js
+│   ├── reminderRoutes.js
+│   ├── receiptRoutes.js
+│   └── api.js
+│
+└── config
+    └── db.js
