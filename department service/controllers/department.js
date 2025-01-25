@@ -1,143 +1,139 @@
-import Course from '../models/course.js';  // Import the Course model
+import Department from '../models/department.js';  // Import the Department model
 
-// Controller to create a new course
-export const createCourse = async (req, res) => {
+// Controller to create a new department
+export const createDepartment = async (req, res) => {
   try {
-    const { courseId, name, description, gradeLevel, teacherId } = req.body;
+    const { departmentId, name, description } = req.body;
 
-    // Create a new course entry
-    const newCourse = await Course.create({
-      courseId,
+    // Create a new department entry
+    const newDepartment = await Department.create({
+      departmentId,
       name,
-      description,
-      gradeLevel,
-      teacherId
+      description
     });
 
     // Send a success response
     res.status(201).json({
-      message: 'Course created successfully',
-      data: newCourse
+      message: 'Department created successfully',
+      data: newDepartment
     });
   } catch (error) {
     // Send an error response if something goes wrong
     res.status(500).json({
-      message: 'Error creating course',
+      message: 'Error creating department',
       error: error.message
     });
   }
 };
 
-// Controller to get all courses
-export const getCourses = async (req, res) => {
+// Controller to get all departments
+export const getDepartments = async (req, res) => {
   try {
-    // Fetch all courses from the database
-    const courses = await Course.findAll();
+    // Fetch all departments from the database
+    const departments = await Department.findAll();
 
-    // Send a success response with the list of courses
+    // Send a success response with the list of departments
     res.status(200).json({
-      message: 'Courses fetched successfully',
-      data: courses
+      message: 'Departments fetched successfully',
+      data: departments
     });
   } catch (error) {
     // Send an error response if something goes wrong
     res.status(500).json({
-      message: 'Error fetching courses',
+      message: 'Error fetching departments',
       error: error.message
     });
   }
 };
 
-// Controller to get a specific course by its ID
-export const getCourseById = async (req, res) => {
+// Controller to get a specific department by its ID
+export const getDepartmentById = async (req, res) => {
   try {
-    const { courseId } = req.params;
+    const { departmentId } = req.params;
 
-    // Fetch a specific course by its ID
-    const course = await Course.findOne({ where: { courseId } });
+    // Fetch a specific department by its ID
+    const department = await Department.findOne({ where: { departmentId } });
 
-    if (!course) {
+    if (!department) {
       return res.status(404).json({
-        message: 'Course not found'
+        message: 'Department not found'
       });
     }
 
-    // Send a success response with the course data
+    // Send a success response with the department data
     res.status(200).json({
-      message: 'Course fetched successfully',
-      data: course
+      message: 'Department fetched successfully',
+      data: department
     });
   } catch (error) {
     // Send an error response if something goes wrong
     res.status(500).json({
-      message: 'Error fetching course',
+      message: 'Error fetching department',
       error: error.message
     });
   }
 };
 
-// Controller to update a course by its ID
-export const updateCourse = async (req, res) => {
+// Controller to update a department by its ID
+export const updateDepartment = async (req, res) => {
   try {
-    const { courseId } = req.params;
-    const { name, description, gradeLevel, teacherId } = req.body;
+    const { departmentId } = req.params;
+    const { name, description } = req.body;
 
-    // Find the course by its ID
-    const course = await Course.findOne({ where: { courseId } });
+    // Find the department by its ID
+    const department = await Department.findOne({ where: { departmentId } });
 
-    if (!course) {
+    if (!department) {
       return res.status(404).json({
-        message: 'Course not found'
+        message: 'Department not found'
       });
     }
 
-    // Update the course information
-    course.name = name || course.name;
-    course.description = description || course.description;
-    course.gradeLevel = gradeLevel || course.gradeLevel;
-    course.teacherId = teacherId || course.teacherId;
+    // Update the department information
+    department.name = name || department.name;
+    department.description = description || department.description;
 
-    await course.save(); // Save the updated course
+    await department.save(); // Save the updated department
 
     // Send a success response
     res.status(200).json({
-      message: 'Course updated successfully',
-      data: course
+      message: 'Department updated successfully',
+      data: department
     });
   } catch (error) {
     // Send an error response if something goes wrong
     res.status(500).json({
-      message: 'Error updating course',
+      message: 'Error updating department',
       error: error.message
     });
   }
 };
 
-// Controller to delete a course by its ID
-export const deleteCourse = async (req, res) => {
+// Controller to delete a department by its ID
+export const deleteDepartment = async (req, res) => {
   try {
-    const { courseId } = req.params;
+    const { departmentId } = req.params;
 
-    // Find the course by its ID
-    const course = await Course.findOne({ where: { courseId } });
+    // Find the department by its ID
+    const department = await Department.findOne({ where: { departmentId } });
 
-    if (!course) {
+    if (!department) {
       return res.status(404).json({
-        message: 'Course not found'
+        message: 'Department not found'
       });
     }
 
-    // Delete the course
-    await course.destroy();
+    // Delete the department
+    await department.destroy();
 
     // Send a success response
     res.status(200).json({
-      message: 'Course deleted successfully'
+      message: 'Department deleted successfully'
     });
   } catch (error) {
     // Send an error response if something goes wrong
     res.status(500).json({
-      message: 'Error deleting course',
+      message: 'Error deleting department',
       error: error.message
     });
   }
