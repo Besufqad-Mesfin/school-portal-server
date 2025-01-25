@@ -1,27 +1,27 @@
 import express from 'express';
 import {
-  createCourse,
-  getCourses,
-  getCourseById,
-  updateCourse,
-  deleteCourse
-} from '../controllers/department.js';  // Importing the course controller methods
+  createDepartment,
+  getdepartment,
+  getDepartmentById,
+  updateDepartment,
+  deleteDepartment,
+} from "../controllers/department.js";  // Importing the course controller methods
 
 const router = express.Router();
 
 // Route to create a new course
-router.post('/courses', createCourse);
+router.post('/department', createDepartment);
 
-// Route to get all courses
-router.get('/courses', getCourses);
+// Route to get all department
+router.get('/department', getdepartment);
 
 // Route to get a specific course by its ID
-router.get('/courses/:courseId', getCourseById);
+router.get('/department/:dept_id', getDepartmentById);
 
 // Route to update a course by its ID
-router.put('/courses/:courseId', updateCourse);
+router.put('/department/:dept_id', updateDepartment);
 
 // Route to delete a course by its ID
-router.delete('/courses/:courseId', deleteCourse);
+router.delete('/department/:dept_id', deleteDepartment);
 
 export default router;
