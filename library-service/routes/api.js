@@ -7,6 +7,6 @@ const api = express.Router(); // Create a new router for the API
 api.use(express.json());
 
 //fine routes
-api.use('/fines', fineRoutes); // Add fine routes
+api.use('/book', fineRoutes); // Add fine routes
 
 export default api; // Export the API router
