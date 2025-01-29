@@ -5,4 +5,6 @@ const api = express.Router();
 
 api.use('/grading', gradeRouter);
 
+api.use('/assessment', assessmentRouter);
+
 module.exports = api;
