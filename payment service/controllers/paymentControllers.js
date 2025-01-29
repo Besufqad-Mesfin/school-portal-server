@@ -26,6 +26,7 @@ export const createPayment = async (req, res) => {
             currency,
             type,
             paymentDate: new Date(), // Automatically adds payment timestamp
+
         });
 
         return res.status(201).json({
