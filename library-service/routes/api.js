@@ -8,7 +8,7 @@ const api = express.Router();
 api.use(express.json());
 
 // Use reporting routes
-api.use('/reports', reportRoutes);
+api.use('book', reportRoutes);
 
 // Include other routes as needed
 
