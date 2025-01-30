@@ -1,8 +1,8 @@
-const Assessment = require("../models/assessmentModel");
-const { Op } = require("sequelize");
+import { Op } from "sequelize";
+import Assessment from "../models/assessmentModel.js";
 
 // Insert a new assessment
-exports.insertAssessment = async (req, res) => {
+export const insertAssessment = async (req, res) => {
     try {
         const { courseId, midTerm, finalExam, assignment } = req.body;
 
@@ -26,7 +26,7 @@ exports.insertAssessment = async (req, res) => {
 };
 
 // Get assessment by ID
-exports.getAssessmentById = async (req, res) => {
+export const getAssessmentById = async (req, res) => {
     try {
         const assessmentId = req.params.assessmentId;
 
@@ -35,9 +35,7 @@ exports.getAssessmentById = async (req, res) => {
         }
 
         const assessment = await Assessment.findOne({
-            where: {
-                assessmentId: assessmentId,
-            },
+            where: { assessmentId },
         });
 
         if (!assessment) {
@@ -52,7 +50,7 @@ exports.getAssessmentById = async (req, res) => {
 };
 
 // Update assessment by ID
-exports.updateAssessmentbyId = async (req, res) => {
+export const updateAssessmentbyId = async (req, res) => {
     try {
         const assessmentId = req.params.assessmentId;
         const { courseId, midTerm, finalExam, assignment } = req.body;
@@ -61,25 +59,20 @@ exports.updateAssessmentbyId = async (req, res) => {
             return res.status(400).json({ message: "Please provide all required fields" });
         }
 
-        const updatedAssessment = await Assessment.update({
-            midTerm: midTerm,
-            finalExam: finalExam,
-            assignment: assignment,
-        }, {
-            where: {
-                [Op.and]: [{ assessmentId: assessmentId }, { courseId: courseId }],
-            },
-        });
+        const updatedAssessment = await Assessment.update(
+            { midTerm, finalExam, assignment },
+            {
+                where: { [Op.and]: [{ assessmentId }, { courseId }] },
+            }
+        );
 
         if (updatedAssessment[0] === 0) {
             return res.status(404).json({ message: "I can't update the assessment" });
         }
 
         res.status(200).json({ message: "Assessment updated successfully", updatedAssessment });
-
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
     }
-
 };
