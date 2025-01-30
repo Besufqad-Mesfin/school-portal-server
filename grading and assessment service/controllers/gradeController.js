@@ -1,5 +1,5 @@
-const Grade = require("../models/gradeModel");
-const { Op } = require("sequelize");
+import Grade from "../models/gradeModel.js";
+import { Op } from"sequelize";
 
 // Insert a new mark and grade
 exports.insertMarkGrade = async (req, res) => {
