@@ -1,5 +1,5 @@
 import Book from '../models/bookModels.js'; // Import the Book model
-
+import { Op } from 'sequelize';
 // Function to add a new book
 export const addBook = async (req, res) => {
     const { title, author, isbn, availableCopies } = req.body; // Destructure the required fields
