@@ -1,5 +1,5 @@
-const express = require("express");
-const {insertAssessment, getAssessmentById, updateAssessmentbyId} = require("../controllers/assessmentController");
+import express from "express";
+import { insertAssessment, getAssessmentById, updateAssessmentbyId } from "../controllers/assessmentController.js";
 
 const assessmentRouter = express.Router();
 
@@ -12,4 +12,4 @@ assessmentRouter.get("/getAssessment/:assessmentId", getAssessmentById);
 // Update assessment by ID
 assessmentRouter.put("/updateAssessment/:assessmentId", updateAssessmentbyId);
 
-module.exports = assessmentRouter;
+export default assessmentRouter;
