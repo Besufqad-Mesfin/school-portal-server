@@ -1,5 +1,5 @@
-const express = require('express');
-const gradeRouter = require('./gradeRouter');
+import express from 'express';
+import gradeRouter from './gradeRouter.js';
 
 const api = express.Router();
 
@@ -7,4 +7,4 @@ api.use('/grading', gradeRouter);
 
 api.use('/assessment', assessmentRouter);
 
-module.exports = api;
+export default api;
