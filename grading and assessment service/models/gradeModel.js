@@ -1,5 +1,5 @@
-const sequelize = require("../config/db");
-const { DataTypes } = require("sequelize");
+import sequelize from "../config/db.js";
+import { DataTypes } from "sequelize";
 
 // Define the Grade model
 
