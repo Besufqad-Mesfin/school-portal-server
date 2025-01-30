@@ -5,10 +5,10 @@ import authMiddleware from '../middlewares/authMiddleware.js'; // Import authent
 const bookRoutes = express.Router(); // Create a new router
 
 // Define book routes
-bookRoutes.post('/', authMiddleware, addBook); // Route to add a new book
-bookRoutes.put('/:bookId', authMiddleware, updateBook); // Route to update a book by ID
-bookRoutes.delete('/:bookId', authMiddleware, deleteBook); // Route to delete a book by ID
-bookRoutes.get('/', authMiddleware, getBooks); // Route to get all books
-bookRoutes.get('/search', authMiddleware, searchBooks); // Route to search for books
+bookRoutes.post('/addBook', authMiddleware, addBook); // Route to add a new book
+bookRoutes.put('/updateBook:bookId', authMiddleware, updateBook); // Route to update a book by ID
+bookRoutes.delete('/deleteBook:bookId', authMiddleware, deleteBook); // Route to delete a book by ID
+bookRoutes.get('/getBooks', authMiddleware, getBooks); // Route to get all books
+bookRoutes.get('/searchBooks', authMiddleware, searchBooks); // Route to search for books
 
 export default bookRoutes; // Export the router
