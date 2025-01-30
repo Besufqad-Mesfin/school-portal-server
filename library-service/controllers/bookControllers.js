@@ -5,7 +5,7 @@ export const addBook = async (req, res) => {
     const { title, author, isbn, availableCopies } = req.body; // Destructure the required fields
     try {
         // Create a new book instance
-        const book = await Book.create({ title, author, isbn, totalCopies, availableCopies});
+        const book = await Book.create({ title, author, isbn, availableCopies});
         res.status(201).json(book); // Respond with the created book
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle errors
