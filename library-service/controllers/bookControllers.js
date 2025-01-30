@@ -13,7 +13,6 @@ export const addBook = async (req, res) => {
 };
 
 // Function to update an existing book
-import Book from '../models/bookModels.js'; // Import the Book model
 
 // Function to update an existing book
 export const updateBook = async (req, res) => {
