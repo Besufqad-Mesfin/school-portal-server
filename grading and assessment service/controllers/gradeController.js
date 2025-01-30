@@ -10,7 +10,7 @@ const insertMarkGrade = async (req, res) => {
             return res.status(400).json({ message: "Please provide all required fields" });
         }
 
-        const studerGrade = await Grade.create();
+        const studentGrade = await Grade.create({studentId, courseId, assessmentId, mark, grade});
         res.status(201).json({message: "Grade inserted successfully", grade:studentGrade});
 
     } catch (error) {
