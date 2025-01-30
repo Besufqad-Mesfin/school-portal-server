@@ -16,13 +16,23 @@ export const addBook = async (req, res) => {
 // Function to update an existing book
 export const updateBook = async (req, res) => {
     const { bookId } = req.params; // Get bookId from route parameters
-    const updates = req.body; // Get updates from the request body
-    try {
-        // Update the book instance
-        const book = await Book.findByPk(bookId);
-        if (!book) return res.status(404).json({ message: 'Book not found' }); // Handle book not found
+    const { title, author, isbn, totalCopies, availableCopies } = req.body; // Destructure the update fields
 
-        await book.update(updates); // Apply updates to the book
+    // Check for empty or missing fields
+    if (!title || !author || !isbn || !availableCopies) {
+        return res.status(400).json({ message: 'at least one (title, author, isbn,  availableCopies) are required.' });
+    }
+
+    try {
+        // Find the book by its ID
+        const book = await Book.findByPk(bookId);
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' }); // Handle book not found
+        }
+
+        // Update the book with new details
+        await book.update({ title, author, isbn, totalCopies, availableCopies }); // No need to call save()
+
         res.status(200).json(book); // Respond with the updated book
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle errors
