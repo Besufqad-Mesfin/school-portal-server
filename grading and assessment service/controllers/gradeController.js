@@ -1,8 +1,9 @@
-const Grade = require("../models/gradeModel");
-const { Op } = require("sequelize");
+import Grade from "../models/gradeModel.js";  // Use import for the Grade model
+import { Op } from "sequelize";  // Use import for Sequelize operators
+
 
 // Insert a new mark and grade
-exports.insertMarkGrade = async (req, res) => {
+const insertMarkGrade = async (req, res) => {
     try {
         const { studentId, courseId, assessmentId, mark, grade } = req.body;
 
@@ -20,7 +21,7 @@ exports.insertMarkGrade = async (req, res) => {
 };
 
 // Get grades for a specific student
-exports.getStudentGrades = async (req, res) => {
+const getStudentGrades = async (req, res) => {
     try {
         const studentId = req.params.studentId;
 
@@ -47,7 +48,7 @@ exports.getStudentGrades = async (req, res) => {
 };
 
 // change grade for a specific student
-exports.changeGrade = async (req, res) => {
+const changeGrade = async (req, res) => {
     try {
         const gradeId = req.params.gradeId;
         const { studentId, assessmentId, courseId, mark, grade } = req.body;
@@ -79,7 +80,7 @@ exports.changeGrade = async (req, res) => {
     }
 };
 
-module.exports = {
+export = {
     insertMarkGrade,
     getStudentGrades,
     changeGrade,
