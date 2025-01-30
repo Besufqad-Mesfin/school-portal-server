@@ -13,20 +13,29 @@ export const addBook = async (req, res) => {
 };
 
 // Function to update an existing book
+import Book from '../models/bookModels.js'; // Import the Book model
+
+// Function to update an existing book
 export const updateBook = async (req, res) => {
     const { bookId } = req.params; // Get bookId from route parameters
-    const updates = req.body; // Get updates from the request body
-    try {
-        // Update the book instance
-        const book = await Book.findByPk(bookId);
-        if (!book) return res.status(404).json({ message: 'Book not found' }); // Handle book not found
+    const { title, author, isbn,  availableCopies } = req.body; // Destructure the update fields
 
-        await book.update(updates); // Apply updates to the book
+    try {
+        // Find the book by its ID
+        const book = await Book.findByPk(bookId);
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' }); // Handle book not found
+        }
+
+        // Update the book with new details using destructured values
+        await book.update({ title, author, isbn, availableCopies }); // No need to call save()
+
         res.status(200).json(book); // Respond with the updated book
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle errors
     }
 };
+
 
 // Function to delete a book
 export const deleteBook = async (req, res) => {
