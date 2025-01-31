@@ -1,5 +1,7 @@
 import Book from '../models/bookModels.js'; // Import the Book model
+import bcrypt from 'bcrypt'; // Import bcrypt for password hashing
 import { Op } from 'sequelize'; // Import Sequelize operators
+import nodemailer from 'nodemailer';
 
 // Function to add a new book
 export const addBook = async (req, res) => {
@@ -66,6 +68,12 @@ export const getBooks = async (req, res) => {
 // Function to search for books
 export const searchBooks = async (req, res) => {
     const { query } = req.query; // Get the search query from request parameters
+
+    // Check if the search query is empty
+    if (!query) {
+        return res.status(400).json({ message: "Search query cannot be empty" });
+    }
+
     try {
         // Search for books by title, author, or ISBN
         const books = await Book.findAll({
@@ -75,8 +83,11 @@ export const searchBooks = async (req, res) => {
                     { author: { [Op.like]: `%${query}%` } },
                     { isbn: query }
                 ]
-            }
+            },
+            limit: 10, // Limit results to 10 books
+            order: [["title", "ASC"]] // Sort results by title (A to Z)
         });
+
         res.status(200).json(books); // Respond with the search results
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle errors
@@ -84,119 +95,153 @@ export const searchBooks = async (req, res) => {
 };
 
 // Function to register a new user
+
 export const registerUser = async (req, res) => {
-    const { username, idNumber, role } = req.body; // Destructure the required fields
-
-    // Validate role
-    if (!['student', 'librarian', 'volunteer'].includes(role)) {
-        return res.status(400).json({ message: 'Invalid role. Must be student, librarian, or volunteer.' });
-    }
-
+    const { username, idNumber, role, password } = req.body;
     try {
-        const user = await User.create({ username, idNumber, role }); // Create a new user
-        res.status(201).json({ message: 'User registered successfully', user }); // Respond with success
+        if (!username || !idNumber || !role || !password) {
+            return res.status(400).json({ message: 'All fields (username, idNumber, role, password) are required.' });
+        }
+
+        if (!['student', 'librarian', 'volunteer'].includes(role)) {
+            return res.status(400).json({ message: 'Invalid role. Must be student, librarian, or volunteer.' });
+        }
+        const existingUser = await User.findOne({ where: { idNumber } });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Username already exists.' });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10); 
+        const user = await User.create({ username, idNumber, role, password: hashedPassword });
+
+        res.status(201).json({ message: 'User registered successfully', user });
     } catch (error) {
-        res.status(500).json({ message: error.message }); // Handle errors
+        res.status(500).json({ message: error.message }); 
     }
 };
 
-// Function to borrow a book
-export const borrowBook = async (req, res) => {
-    const { bookId } = req.body;
-    const studentId = req.user.id; // Changed userId to studentId
 
+
+export const borrowBook = async (req, res) => {
+    const { bookId, studentId } = req.body; 
     try {
         const book = await Book.findByPk(bookId);
         if (!book || book.availableCopies < 1) {
             return res.status(400).json({ message: 'Book not available for borrowing' });
         }
 
+        const existingTransaction = await Transaction.findOne({ where: { studentId, bookId, returned: false } });
+        if (existingTransaction) {
+            return res.status(400).json({ message: 'You have already borrowed this book.' });
+        }
+        const borrowedBooksCount = await Transaction.count({ where: { studentId, returned: false } });
+        if (borrowedBooksCount >= 3) {
+            return res.status(400).json({ message: 'You can only borrow 3 books at a time.' });
+        }
+
         const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + 14); // 2 weeks from now
-
-        const transaction = await Transaction.create({ studentId, bookId, dueDate }); // Create transaction
-
-        book.availableCopies -= 1; // Decrease available copies
-        await book.save(); // Save updated book
-
+        dueDate.setDate(dueDate.getDate() + 14); 
+        const transaction = await Transaction.create({ studentId, bookId, dueDate });
+        book.availableCopies -= 1;
+        await book.save(); 
         res.status(201).json(transaction);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message }); 
     }
 };
 
-// Function to return a book
+
 export const returnBook = async (req, res) => {
     const { transactionId } = req.body;
-
     try {
         const transaction = await Transaction.findByPk(transactionId);
         if (!transaction) {
             return res.status(404).json({ message: 'Transaction not found' });
         }
-
-        transaction.returnDate = new Date(); // Set return date
-        await transaction.save(); // Save updated transaction
-
+        if (transaction.returnDate) {
+            return res.status(400).json({ message: 'This book has already been returned.' });
+        }
+        transaction.returnDate = new Date(); 
+        await transaction.save(); 
+        
         const book = await Book.findByPk(transaction.bookId);
-        book.availableCopies += 1; // Increase available copies
-        await book.save(); // Save updated book
 
+        book.availableCopies += 1; 
+        await book.save(); 
         res.status(200).json(transaction);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message }); 
     }
 };
 
-// Function to send a due date reminder notification
+
+
 export const sendDueDateReminder = async (req, res) => {
-    const { userId, message } = req.body;
+    const { studentId, message } = req.body;
 
     try {
         const notification = new Notification({
-            userId,
+            studentId,
             message,
             type: 'due_date_reminder'
         });
         await notification.save();
 
-        // Logic to send the notification (e.g., email, SMS) would go here
+        const user = await User.findByPk(studentId); 
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'your-email@gmail.com', 
+                pass: 'your-email-password' 
+            }
+        });
+
+        const mailOptions = {
+            from: 'your-email@gmail.com',
+            to: user.email, 
+            subject: 'Library Due Date Reminder',
+            text: message 
+        };
+
+        await transporter.sendMail(mailOptions);
 
         res.status(201).json(notification);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message }); 
     }
 };
 
-// Function to announce new arrivals
+
 export const announceNewArrivals = async (req, res) => {
-    const { users, message } = req.body; // Assume users is an array of user IDs
-
+    const { message } = req.body;  
     try {
-        const notifications = [];
+        const students = await User.findAll(); 
 
-        for (const userId of users) {
-            const notification = new Notification({
-                userId,
+        const notifications = students.map(student => {
+            return new Notification({
+                studentId: student.id,  
                 message,
                 type: 'new_arrival'
-            });
-            notifications.push(notification.save());
-        }
+            }).save();
+        });
 
         await Promise.all(notifications);
-        res.status(201).json({ message: 'Notifications sent successfully' });
+
+        res.status(201).json({ message: 'Notifications sent to all students successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// Function to calculate fines for overdue books
+
+
 export const calculateFines = async (req, res) => {
     const { transactionId } = req.body;
 
     try {
-        const transaction = await Transaction.findByPk(transactionId); // Use findByPk for Sequelize
+        const transaction = await Transaction.findByPk(transactionId); 
         if (!transaction) {
             return res.status(404).json({ message: 'Transaction not found' });
         }
@@ -205,10 +250,11 @@ export const calculateFines = async (req, res) => {
         let fine = 0;
         if (!transaction.returnDate && today > transaction.dueDate) {
             const daysOverdue = Math.ceil((today - transaction.dueDate) / (1000 * 60 * 60 * 24));
-            fine = daysOverdue * 0.5; // Example fine rate
+            fine = daysOverdue * 0.5; 
         }
-
-        // Create or update fine record
+        if (fine > 100) {
+            fine = 100;
+        }
         await Fine.upsert({
             transactionId,
             amount: fine,
@@ -230,9 +276,12 @@ export const payFines = async (req, res) => {
         if (!fine) {
             return res.status(404).json({ message: 'Fine not found' });
         }
+        if (fine.paid) {
+            return res.status(400).json({ message: 'Fine has already been paid' });
+        }
 
-        fine.paid = true; // Mark fine as paid
-        await fine.save(); // Save updated fine record
+        fine.paid = true; 
+        await fine.save(); 
 
         res.status(200).json({ message: 'Fine paid successfully' });
     } catch (error) {
@@ -242,14 +291,14 @@ export const payFines = async (req, res) => {
 
 // Function to view fines
 export const viewFines = async (req, res) => {
-    const studentId = req.user.id;
+    const studentId = req.body;
 
     try {
         const fines = await Fine.findAll({
             where: { paid: false },
             include: [{
                 model: Transaction,
-                where: { studentId } // Assuming Transaction model has studentId
+                where: { studentId } 
             }]
         });
 
@@ -264,7 +313,7 @@ export const generateUsageReports = async (req, res) => {
     try {
         const totalTransactions = await Transaction.count();
         const totalBooks = await Book.count();
-        const totalStudent = await User.count();
+        const totalStudent = await Book.count();
 
         res.status(200).json({
             totalTransactions,

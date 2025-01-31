@@ -41,18 +41,12 @@ const Book = sequelize.define('Book', {
     studentId: { // Changed userId to studentId
         type: DataTypes.INTEGER, // Assuming studentId is an Integer
         allowNull: false,
-        references: {
-            model: 'Users', // Name of the User model
-            key: 'id'
-        }
+       
     },
     bookId: {
         type: DataTypes.INTEGER, // Assuming bookId is an Integer
         allowNull: false,
-        references: {
-            model: 'Books', // Name of the Book model
-            key: 'id'
-        }
+       
     },
     dateBorrowed: {
         type: DataTypes.DATE,
