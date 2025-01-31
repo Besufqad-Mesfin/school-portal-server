@@ -1,5 +1,5 @@
-import Grade from "../models/gradeModel.js";
-import { Op } from"sequelize";
+import Grade from "../models/gradeModel.js";  // Use import for the Grade model
+import { Op } from "sequelize";  // Use import for Sequelize operators
 
 // Insert a new mark and grade
 const insertMarkGrade = async (req, res) => {
@@ -79,4 +79,8 @@ const changeGrade = async (req, res) => {
     }
 };
 
-export { insertMarkGrade, getStudentGrades, changeGrade };
+export = {
+    insertMarkGrade,
+    getStudentGrades,
+    changeGrade,
+};
