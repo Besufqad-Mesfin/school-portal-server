@@ -1,7 +1,6 @@
 import Grade from "../models/gradeModel.js";  // Use import for the Grade model
 import { Op } from "sequelize";  // Use import for Sequelize operators
 
-
 // Insert a new mark and grade
 const insertMarkGrade = async (req, res) => {
     try {
@@ -11,7 +10,7 @@ const insertMarkGrade = async (req, res) => {
             return res.status(400).json({ message: "Please provide all required fields" });
         }
 
-        const studerGrade = await Grade.create();
+        const studentGrade = await Grade.create({studentId, courseId, assessmentId, mark, grade});
         res.status(201).json({message: "Grade inserted successfully", grade:studentGrade});
 
     } catch (error) {
