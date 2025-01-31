@@ -17,7 +17,7 @@ export const addBook = async (req, res) => {
 
 // Function to update an existing book
 export const updateBook = async (req, res) => {
-    const { bookId } = req.params; // Get bookId from route parameters
+    const { bookId } = req.params;
     const { title, author, isbn, totalCopies, availableCopies } = req.body; // Destructure the update fields
 
     // Check for empty or missing fields
