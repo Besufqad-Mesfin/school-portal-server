@@ -1,14 +1,20 @@
-import Book from '../models/bookModels.js'; // Import the Book model
-import bcrypt from 'bcrypt'; // Import bcrypt for password hashing
-import { Op } from 'sequelize'; // Import Sequelize operators
+import Book from '../models/bookModels.js'; 
+import Transaction from '../models/transactionModel.js';
+import Notification from '../models/notificationModel.js';
+import Fine from '../models/fineModel.js';
+import User from '../models/userModel.js';
+import { Op } from 'sequelize';
 import nodemailer from 'nodemailer';
-
 // Function to add a new book
 export const addBook = async (req, res) => {
-    const { title, author, isbn, totalCopies } = req.body; // Destructure the required fields
+    const { title, author, isbn, availableCopies } = req.body; // Destructure the required fields
+    if (!title || !author || !isbn || !availableCopies) {
+        return res.status(400).json({ message: 'at least one (title, author, isbn,  availableCopies) are required.' });
+    }
     try {
+        
         // Create a new book instance
-        const book = await Book.create({ title, author, isbn, totalCopies, availableCopies: totalCopies });
+        const book = await Book.create({ title, author, isbn, availableCopies });
         res.status(201).json(book); // Respond with the created book
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle errors
@@ -96,35 +102,16 @@ export const searchBooks = async (req, res) => {
 
 // Function to register a new user
 
-export const registerUser = async (req, res) => {
-    const { username, idNumber, role, password } = req.body;
-    try {
-        if (!username || !idNumber || !role || !password) {
-            return res.status(400).json({ message: 'All fields (username, idNumber, role, password) are required.' });
-        }
-
-        if (!['student', 'librarian', 'volunteer'].includes(role)) {
-            return res.status(400).json({ message: 'Invalid role. Must be student, librarian, or volunteer.' });
-        }
-        const existingUser = await User.findOne({ where: { idNumber } });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Username already exists.' });
-        }
-        const hashedPassword = await bcrypt.hash(password, 10); 
-        const user = await User.create({ username, idNumber, role, password: hashedPassword });
-
-        res.status(201).json({ message: 'User registered successfully', user });
-    } catch (error) {
-        res.status(500).json({ message: error.message }); 
-    }
-};
-
-
 
 export const borrowBook = async (req, res) => {
     const { bookId, studentId } = req.body; 
     try {
         const book = await Book.findByPk(bookId);
+        const student = await User.findByPk(studentId);
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
         if (!book || book.availableCopies < 1) {
             return res.status(400).json({ message: 'Book not available for borrowing' });
         }
@@ -193,10 +180,11 @@ export const sendDueDateReminder = async (req, res) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'your-email@gmail.com', 
-                pass: 'your-email-password' 
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
             }
         });
+        
 
         const mailOptions = {
             from: 'your-email@gmail.com',
@@ -267,53 +255,11 @@ export const calculateFines = async (req, res) => {
     }
 };
 
-// Function to pay fines
-export const payFines = async (req, res) => {
-    const { transactionId } = req.body;
-
-    try {
-        const fine = await Fine.findOne({ where: { transactionId } });
-        if (!fine) {
-            return res.status(404).json({ message: 'Fine not found' });
-        }
-        if (fine.paid) {
-            return res.status(400).json({ message: 'Fine has already been paid' });
-        }
-
-        fine.paid = true; 
-        await fine.save(); 
-
-        res.status(200).json({ message: 'Fine paid successfully' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// Function to view fines
-export const viewFines = async (req, res) => {
-    const studentId = req.body;
-
-    try {
-        const fines = await Fine.findAll({
-            where: { paid: false },
-            include: [{
-                model: Transaction,
-                where: { studentId } 
-            }]
-        });
-
-        res.status(200).json(fines);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// Function to generate usage reports
 export const generateUsageReports = async (req, res) => {
     try {
         const totalTransactions = await Transaction.count();
         const totalBooks = await Book.count();
-        const totalStudent = await Book.count();
+        const totalStudents = await User.count(); 
 
         res.status(200).json({
             totalTransactions,
@@ -325,22 +271,4 @@ export const generateUsageReports = async (req, res) => {
     }
 };
 
-// Function to view popular books
-export const viewPopularBooks = async (req, res) => {
-    try {
-        const popularBooks = await Transaction.findAll({
-            attributes: ['bookId', [sequelize.fn('COUNT', sequelize.col('bookId')), 'count']],
-            group: ['bookId'],
-            order: [[sequelize.fn('COUNT', sequelize.col('bookId')), 'DESC']],
-            limit: 5,
-            include: [{
-                model: Book,
-                attributes: ['id', 'title', 'author'] // Include necessary book details
-            }]
-        });
 
-        res.status(200).json(popularBooks);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
