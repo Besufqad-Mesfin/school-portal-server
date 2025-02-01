@@ -101,7 +101,21 @@ export const searchBooks = async (req, res) => {
 };
 
 // Function to register a new user
-
+export const registerUser = async (req, res) => {
+    const { firstName, lastName, idNumber, role } = req.body;
+    if (!firstName || !lastName || !idNumber || !role) {
+        return res.status(400).json({ message: 'All fields (firstName, lastName, idNumber, role) are required.' });
+    }
+    if (!['student', 'librarian', 'volunteer'].includes(role)) {
+        return res.status(400).json({ message: 'Invalid role. Must be student, librarian, or volunteer.' });
+    }
+    try {
+        const user = await User.create({ firstName, lastName, idNumber, role });
+        res.status(201).json({ message: 'User registered successfully', user });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 export const borrowBook = async (req, res) => {
     const { bookId, studentId } = req.body; 
