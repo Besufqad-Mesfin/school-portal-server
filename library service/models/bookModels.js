@@ -20,10 +20,7 @@ const Book = sequelize.define('Book', {
         type: DataTypes.INTEGER, // Number of available copies
         defaultValue: 1, // Default available copies
     },
-    totalCopies: {
-        type: DataTypes.INTEGER, // Total copies of the book
-        allowNull: false, // Total copies cannot be null
-    },
+   
 }, {
     timestamps: true, // Enable timestamps for createdAt and updatedAt
 });
