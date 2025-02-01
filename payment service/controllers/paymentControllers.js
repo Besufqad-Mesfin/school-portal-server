@@ -1,23 +1,28 @@
+import nodemailer from 'nodemailer';
 import Payment from '../models/paymentModels'; // Import the Payment model
 import { Sequelize } from 'sequelize'; // Import Sequelize for database operations
-import Refund from '../models/refundModel.js'; // Separate Refund model for handling refunds
+
+// Configure the email sender (Use a real email service in production)
+const transporter = nodemailer.createTransport({
+    service: 'gmail',  // You can use another email provider
+    auth: {
+        user: 'your-email@gmail.com',  // Replace with your email
+        pass: 'your-email-password'    // Use an app password for security
+    }
+});
 
 // Function to create a new payment
 export const createPayment = async (req, res) => {
-    const { studentId, amount, currency = 'USD', type } = req.body;
+    const { studentId, amount, type } = req.body;
 
     // Validate required fields
     if (!studentId || !amount || !type) {
-        return res.status(400).json({ 
-            message: "Student ID, amount, and type are required." 
-        });
+        return res.status(400).json({ message: "Student ID, amount, and type are required." });
     }
 
     // Validate amount
     if (isNaN(amount) || amount <= 0) {
-        return res.status(400).json({ 
-            message: "Amount must be a positive number." 
-        });
+        return res.status(400).json({ message: "Amount must be a positive number." });
     }
 
     try {
@@ -25,8 +30,8 @@ export const createPayment = async (req, res) => {
         const payment = await Payment.create({
             studentId,
             amount,
-            currency,
             type,
+            status: 'pending', // Default status for new payments
             paymentDate: new Date(), // Automatically adds payment timestamp
         });
 
@@ -35,7 +40,7 @@ export const createPayment = async (req, res) => {
             payment,
         });
     } catch (error) {
-        console.error("Error creating payment:", error); // Logs detailed error for debugging
+        console.error("Error creating payment:", error);
         return res.status(500).json({ 
             message: "An error occurred while creating the payment.",
             error: error.message,
@@ -45,36 +50,33 @@ export const createPayment = async (req, res) => {
 
 // Function to get a student's payment history
 export const getPaymentHistory = async (req, res) => {
-    const { studentId, startDate, endDate, status } = req.body; // Get filters like date range or status from the URL
+    const { studentId } = req.params; // Use req.params instead of req.body
+    const { startDate, endDate, status } = req.query; // Use query parameters
+
+    if (!studentId) {
+        return res.status(400).json({ message: "Student ID is required." });
+    }
 
     try {
-        // Set up rules for finding payments
-        const filter = {
-            studentId, // Find only payments for this student
-        };
+        const filter = { studentId };
 
-        // If the user gives a start and end date, add them as a rule
         if (startDate && endDate) {
-            filter.createdAt = {
-                [Sequelize.Op.between]: [new Date(startDate), new Date(endDate)], // Between the start and end dates
+            filter.paymentDate = {
+                [Sequelize.Op.between]: [new Date(startDate), new Date(endDate)],
             };
         }
 
-        // If the user gives a status (like "completed"), add it as a rule
         if (status) {
             filter.status = status;
         }
 
-        // Get the payments that match these rules from the database
         const payments = await Payment.findAll({
-            where: filter, // Apply the rules we made
-            order: [['createdAt', 'DESC']], // Sort payments from newest to oldest
+            where: filter,
+            order: [['paymentDate', 'DESC']],
         });
 
-        // Send the found payments back to the user
         res.status(200).json(payments);
     } catch (error) {
-        // If something goes wrong, send an error message
         console.error("Error fetching payment history:", error);
         res.status(500).json({ message: "An error occurred while retrieving payment history.", error: error.message });
     }
@@ -82,78 +84,84 @@ export const getPaymentHistory = async (req, res) => {
 
 // Function to send reminders for unpaid or upcoming payments
 export const sendPaymentReminder = async (req, res) => {
-    const { studentId } = req.body;  // Get the student ID from the request body (the user asking for a reminder)
+    const { studentId, email } = req.body;  // Get student ID and email
+
+    if (!studentId || !email) {
+        return res.status(400).json({ message: "Student ID and email are required." });
+    }
 
     try {
-        // Get all upcoming or pending payments for this student from the database
+        // Find pending payments with a future due date
         const upcomingPayments = await Payment.findAll({
             where: {
-                studentId,  // Find payments for this student
-                status: 'pending',      // Payments that are still pending
-                createdAt: {
-                    [Sequelize.Op.gt]: new Date()  // Get payments that are due in the future
-                }
+                studentId,
+                status: 'pending',
+                dueDate: { [Sequelize.Op.gt]: new Date() }, // Payments due in the future
             },
-            order: [['createdAt', 'ASC']]  // Order by the earliest payment
+            order: [['dueDate', 'ASC']], // Sort by due date (earliest first)
         });
 
-        // If there are no upcoming payments
         if (upcomingPayments.length === 0) {
             return res.status(200).json({ message: 'No upcoming payments for this student.' });
         }
 
-        // Loop through each upcoming payment and send a reminder
-        const reminders = upcomingPayments.map(payment => {
-            return {
-                studentId: payment.studentId,
-                amount: payment.amount,
-                dueDate: payment.createdAt,
-                message: `Reminder: Your payment of ${payment.amount} is due on ${payment.createdAt}. Please make sure to pay before the due date.`
+        // Loop through payments and send an email for each
+        for (const payment of upcomingPayments) {
+            const mailOptions = {
+                from: 'your-email@gmail.com',  // Replace with your email
+                to: email,
+                subject: 'Payment Reminder - School Fee',
+                text: `Dear Student,\n\nThis is a reminder that your payment of ${payment.amount} Birr is due on ${payment.dueDate}.\n\nPlease make sure to pay before the due date to avoid any penalties.\n\nThank you.`,
             };
-        });
 
-        // Send reminders back as a response (in a real-world scenario, you'd send this via email or SMS)
-        res.status(200).json({ message: 'Reminder(s) sent successfully!', reminders });
+            // Send email
+            await transporter.sendMail(mailOptions);
+        }
+
+        res.status(200).json({ message: 'Reminder(s) sent successfully via email!' });
     } catch (error) {
-        // Handle any errors
-        console.error("Error sending payment reminders:", error); // Logs detailed error for debugging
-        res.status(500).json({ message: error.message });
+        console.error("Error sending payment reminders:", error);
+        res.status(500).json({ message: "Failed to send email reminders.", error: error.message });
     }
 };
 
 // Function to request a refund for a payment
 export const requestRefund = async (req, res) => {
-    const { paymentId } = req.body; // Extract payment ID from request body
+    const { paymentId } = req.body;
+
+    if (!paymentId) {
+        return res.status(400).json({ message: "Payment ID is required." });
+    }
 
     try {
-        // Find the payment record by ID
         const payment = await Payment.findByPk(paymentId);
 
-        // Validate if payment exists and its status is 'completed'
-        if (!payment || payment.status !== 'completed') {
-            return res.status(400).json({ message: 'Invalid refund request. Payment not found or not completed.' });
+        if (!payment) {
+            return res.status(404).json({ message: "Payment not found." });
+        }
+
+        if (payment.status !== 'completed') {
+            return res.status(400).json({ message: "Only completed payments can be refunded." });
         }
 
         // Create a refund record
         const refund = await Refund.create({
             paymentId,
-            studentId, 
-            amount,
-            status: 'pending', // Initial refund status is 'pending'
+            studentId: payment.studentId,
+            amount: payment.amount,
+            status: 'pending',
         });
 
-        // Update the payment status to 'refunded'
+        // Update the payment status
         payment.status = 'refunded';
-        await payment.save(); // Save updated payment status
+        await payment.save();
 
-        // Send success response
         res.status(200).json({
             message: 'Refund request processed successfully.',
             refund,
         });
     } catch (error) {
-        // Handle errors and send error response
-        console.error("Error processing refund request:", error); // Logs detailed error for debugging
+        console.error("Error processing refund request:", error);
         res.status(500).json({ message: error.message });
     }
 };
