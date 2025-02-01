@@ -20,24 +20,7 @@ const Book = sequelize.define('Book', {
         type: DataTypes.INTEGER, // Number of available copies
         defaultValue: 1, // Default available copies
     },
-    totalCopies: {
-        type: DataTypes.INTEGER, // Total copies of the book
-        allowNull: false, // Total copies cannot be null
-    },
-    username: {
-        type: DataTypes.STRING, // Username of the user
-        allowNull: false, // Username cannot be null
-        unique: true, // Username must be unique
-    },
-    idNumber: {
-        type: DataTypes.STRING, // ID number of the user
-        allowNull: false, // ID number cannot be null
-        unique: true, // ID number must be unique
-    },
-    role: {
-        type: DataTypes.ENUM('student', 'librarian', 'volunteer'), // Role of the user
-        allowNull: false, // Role cannot be null
-    },
+    
 }, {
     timestamps: true, // Enable timestamps for createdAt and updatedAt
 });
