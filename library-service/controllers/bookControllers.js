@@ -1,13 +1,20 @@
-import Book from '../models/bookModels.js'; // Import the Book model
-import User from '../models/userModels.js'; // Import the User model
-import Transaction from '../models/transactionModels.js'; // Import the Transaction model
-import Sequelize from 'sequelize'; // Import Sequelize for query operations
-
+import Book from '../models/bookModels.js'; 
+import Transaction from '../models/transactionModel.js';
+import Notification from '../models/notificationModel.js';
+import Fine from '../models/fineModel.js';
+import User from '../models/userModel.js';
+import { Op } from 'sequelize';
+import nodemailer from 'nodemailer';
 // Function to add a new book
 export const addBook = async (req, res) => {
-    const { title, author, isbn, totalCopies } = req.body;
+    const { title, author, isbn, availableCopies } = req.body; // Destructure the required fields
+    if (!title || !author || !isbn || !availableCopies) {
+        return res.status(400).json({ message: 'at least one (title, author, isbn,  availableCopies) are required.' });
+    }
     try {
-        const book = await Book.create({ title, author, isbn, totalCopies, availableCopies: totalCopies });
+        
+        // Create a new book instance
+        const book = await Book.create({ title, author, isbn, availableCopies });
         res.status(201).json(book); // Respond with the created book
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle errors
@@ -17,136 +24,139 @@ export const addBook = async (req, res) => {
 // Function to update an existing book
 export const updateBook = async (req, res) => {
     const { bookId } = req.params;
-    const updates = req.body;
-    try {
-        const book = await Book.findByPk(bookId);
-        if (!book) return res.status(404).json({ message: 'Book not found' });
+    const { title, author, isbn, totalCopies, availableCopies } = req.body; // Destructure the update fields
 
-        await book.update(updates);
+    // Check for empty or missing fields
+    if (!title || !author || !isbn || !availableCopies) {
+        return res.status(400).json({ message: 'at least one (title, author, isbn,  availableCopies) are required.' });
+    }
+
+    try {
+        // Find the book by its ID
+        const book = await Book.findByPk(bookId);
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' }); // Handle book not found
+        }
+
+        // Update the book with new details
+        await book.update({ title, author, isbn, totalCopies, availableCopies }); // No need to call save()
+
         res.status(200).json(book); // Respond with the updated book
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message }); // Handle errors
     }
 };
 
 // Function to delete a book
 export const deleteBook = async (req, res) => {
-    const { bookId } = req.params;
+    const { bookId } = req.params; // Get bookId from route parameters
     try {
-        const book = await Book.findByPk(bookId);
-        if (!book) return res.status(404).json({ message: 'Book not found' });
+        const book = await Book.findByPk(bookId); // Find the book by ID
+        if (!book) return res.status(404).json({ message: 'Book not found' }); // Handle book not found
 
-        await book.destroy();
+        await book.destroy(); // Delete the book
         res.status(204).send(); // Respond with no content
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message }); // Handle errors
     }
 };
 
 // Function to get all books
 export const getBooks = async (req, res) => {
     try {
-        const books = await Book.findAll();
+        const books = await Book.findAll(); // Fetch all books
         res.status(200).json(books); // Respond with the list of books
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message }); // Handle errors
     }
 };
 
 // Function to search for books
 export const searchBooks = async (req, res) => {
-    const { query } = req.query;
+    const { query } = req.query; // Get the search query from request parameters
+
+    // Check if the search query is empty
+    if (!query) {
+        return res.status(400).json({ message: "Search query cannot be empty" });
+    }
+
     try {
+        // Search for books by title, author, or ISBN
         const books = await Book.findAll({
             where: {
-                [Sequelize.Op.or]: [
-                    { title: { [Sequelize.Op.like]: `%${query}%` } },
-                    { author: { [Sequelize.Op.like]: `%${query}%` } },
+                [Op.or]: [
+                    { title: { [Op.like]: `%${query}%` } },
+                    { author: { [Op.like]: `%${query}%` } },
                     { isbn: query }
                 ]
-            }
+            },
+            limit: 10, // Limit results to 10 books
+            order: [["title", "ASC"]] // Sort results by title (A to Z)
         });
+
         res.status(200).json(books); // Respond with the search results
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message }); // Handle errors
     }
 };
 
 // Function to register a new user
-export const registerUser = async (req, res) => {
-    const { username, idNumber, role } = req.body;
 
-    if (!['student', 'librarian', 'volunteer'].includes(role)) {
-        return res.status(400).json({ message: 'Invalid role. Must be student, librarian, or volunteer.' });
-    }
 
-    try {
-        const user = await User.create({ username, idNumber, role });
-        res.status(201).json({ message: 'User registered successfully', user });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// Function to borrow a book
 export const borrowBook = async (req, res) => {
-    const { bookId } = req.body;
-    const studentId = req.user.id;
-
+    const { bookId, studentId } = req.body; 
     try {
         const book = await Book.findByPk(bookId);
+        const student = await User.findByPk(studentId);
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
         if (!book || book.availableCopies < 1) {
             return res.status(400).json({ message: 'Book not available for borrowing' });
         }
 
+        const existingTransaction = await Transaction.findOne({ where: { studentId, bookId, returned: false } });
+        if (existingTransaction) {
+            return res.status(400).json({ message: 'You have already borrowed this book.' });
+        }
+        const borrowedBooksCount = await Transaction.count({ where: { studentId, returned: false } });
+        if (borrowedBooksCount >= 3) {
+            return res.status(400).json({ message: 'You can only borrow 3 books at a time.' });
+        }
+
         const dueDate = new Date();
-        dueDate.setDate(dueDate.getDate() + 14);
-
+        dueDate.setDate(dueDate.getDate() + 14); 
         const transaction = await Transaction.create({ studentId, bookId, dueDate });
-
         book.availableCopies -= 1;
-        await book.save();
-
+        await book.save(); 
         res.status(201).json(transaction);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message }); 
     }
 };
 
-// Function to return a borrowed book
+
 export const returnBook = async (req, res) => {
     const { transactionId } = req.body;
-
     try {
         const transaction = await Transaction.findByPk(transactionId);
         if (!transaction) {
             return res.status(404).json({ message: 'Transaction not found' });
         }
-
-        transaction.returnDate = new Date();
-        await transaction.save();
-
+        if (transaction.returnDate) {
+            return res.status(400).json({ message: 'This book has already been returned.' });
+        }
+        transaction.returnDate = new Date(); 
+        await transaction.save(); 
+        
         const book = await Book.findByPk(transaction.bookId);
-        book.availableCopies += 1;
-        await book.save();
 
+        book.availableCopies += 1; 
+        await book.save(); 
         res.status(200).json(transaction);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message }); 
     }
 };
 
-// Function to view borrowed books
-export const viewBorrowedBooks = async (req, res) => {
-    const studentId = req.user.id;
-
-    try {
-        const transactions = await Transaction.findAll({
-            where: { studentId, returnDate: null },
-            include: [{ model: Book }]
-        });
-        res.status(200).json(transactions);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
