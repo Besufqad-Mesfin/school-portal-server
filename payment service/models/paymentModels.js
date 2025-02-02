@@ -1,9 +1,8 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import sequelize from '../config/database'; // Adjust to your DB configuration
+import sequelize from '../config/database'; // Database connection
 
-// Define the Payment model
 const Payment = sequelize.define('Payment', {
-    paymentId: { // Changed to explicitly use paymentId
+    paymentId: { 
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -18,11 +17,29 @@ const Payment = sequelize.define('Payment', {
     },
     currency: {
         type: DataTypes.STRING,
-        defaultValue: 'USD',
+        defaultValue: 'BIRR',
     },
     type: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    paymentMethod: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'cash', 
+    },
+    bankName: {
+        type: DataTypes.STRING,
+        allowNull: true, 
+    },
+    transactionId: {
+        type: DataTypes.STRING,
+        allowNull: true, 
+        unique: true,
+    },
+    accountNumber: {
+        type: DataTypes.STRING,
+        allowNull: true, 
     },
     paymentDate: {
         type: DataTypes.DATE,
@@ -31,12 +48,11 @@ const Payment = sequelize.define('Payment', {
     },
     status: {
         type: DataTypes.STRING,
-        defaultValue: 'pending', // 'pending', 'completed', 'refunded'
+        defaultValue: 'pending', 
     },
-    // Refund-related attributes
     refundStatus: {
         type: DataTypes.STRING,
-        defaultValue: 'none', // 'none', 'pending', 'approved', 'rejected'
+        defaultValue: 'none', 
     },
     refundAmount: {
         type: DataTypes.FLOAT,
@@ -47,7 +63,6 @@ const Payment = sequelize.define('Payment', {
         type: DataTypes.DATE,
         allowNull: true,
     },
-    // Receipt-related attributes
     receiptNumber: {
         type: DataTypes.STRING,
         allowNull: true,
