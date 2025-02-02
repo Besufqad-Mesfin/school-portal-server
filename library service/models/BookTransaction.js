@@ -13,7 +13,7 @@ const BookTransaction = sequelize.define('BookTransaction', {
         primaryKey: true, 
     },
     studentId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         references: {
             model: Student,
             key: 'id'

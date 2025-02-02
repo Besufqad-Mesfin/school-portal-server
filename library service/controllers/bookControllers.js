@@ -117,9 +117,9 @@ export const borrowBook = async (req, res) => {
 };
 
 export const returnBook = async (req, res) => {
-    const { transactionId } = req.body;
+    const { booktransactionId } = req.body;
     try {
-        const transaction = await BookTransaction.findByPk(transactionId);
+        const transaction = await BookTransaction.findByPk(booktransactionId);
         if (!transaction) {
             return res.status(404).json({ message: 'Transaction not found' });
         }
