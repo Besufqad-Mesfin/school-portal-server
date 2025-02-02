@@ -1,32 +1,49 @@
-import Payment from '../models/paymentModels'; // Import the Payment model
-import { Sequelize } from 'sequelize'; // Import Sequelize for database operations
+import Payment from '../models/paymentModels';
+import { Sequelize } from 'sequelize';
 
-// Function to create a new payment
+const generateReceiptNumber = () => {
+    return 'ReceiptNumber-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+};
+
 export const createPayment = async (req, res) => {
-    const { studentId, amount, currency = 'USD', type } = req.body;
+    const {
+        studentId, amount, type, paymentMethod = 'cash', bankName, transactionId, accountNumber,
+    } = req.body;
 
-    // Validate required fields
     if (!studentId || !amount || !type) {
-        return res.status(400).json({ 
-            message: "Student ID, amount, and type are required." 
-        });
+        return res.status(400).json({ message: "Student ID, amount, and type are required." });
     }
 
-    // Validate amount
     if (isNaN(amount) || amount <= 0) {
-        return res.status(400).json({ 
-            message: "Amount must be a positive number." 
-        });
+        return res.status(400).json({ message: "Amount must be a positive number." });
+    }
+
+    if (paymentMethod === 'bank_transfer') {
+        if (!transactionId || !bankName) {
+            return res.status(400).json({ message: "Bank name and transaction ID are required for bank transfers." });
+        }
+
+        const existingPayment = await Payment.findOne({ where: { transactionId } });
+        if (existingPayment) {
+            return res.status(400).json({ message: "Transaction ID already exists." });
+        }
     }
 
     try {
-        // Create a new payment record in the database
+        const receiptNumber = generateReceiptNumber();
+
         const payment = await Payment.create({
             studentId,
             amount,
-            currency,
             type,
-            paymentDate: new Date(), // Automatically adds payment timestamp
+            paymentMethod,
+            bankName: paymentMethod === 'bank_transfer' ? bankName : null,
+            transactionId: paymentMethod === 'bank_transfer' ? transactionId : null,
+            accountNumber: paymentMethod === 'bank_transfer' ? accountNumber : null,
+            status: paymentMethod === 'bank_transfer' ? 'pending' : 'completed', 
+            paymentDate: new Date(),
+            receiptNumber,
+            receiptDate: new Date(),
         });
 
         return res.status(201).json({
@@ -34,162 +51,115 @@ export const createPayment = async (req, res) => {
             payment,
         });
     } catch (error) {
-        console.error("Error creating payment:", error); // Logs detailed error for debugging
-        return res.status(500).json({ 
+        console.error("Error creating payment:", error);
+        return res.status(500).json({
             message: "An error occurred while creating the payment.",
             error: error.message,
         });
     }
 };
 
-// Function to get a student's payment history
 export const getPaymentHistory = async (req, res) => {
-    const { studentId, startDate, endDate, status } = req.body; // Get filters like date range or status from the URL
+    const { studentId } = req.params; 
+    const { startDate, endDate, status } = req.query; 
+
+    if (!studentId) {
+        return res.status(400).json({ message: "Student ID is required." });
+    }
 
     try {
-        // Set up rules for finding payments
-        const filter = {
-            studentId, // Find only payments for this student
-        };
+        const filter = { studentId };
 
-        // If the user gives a start and end date, add them as a rule
-        if (startDate && endDate) {
-            filter.createdAt = {
-                [Sequelize.Op.between]: [new Date(startDate), new Date(endDate)], // Between the start and end dates
-            };
+        if (startDate || endDate) {
+            filter.paymentDate = {};
+            if (startDate) filter.paymentDate[Sequelize.Op.gte] = new Date(startDate);
+            if (endDate) filter.paymentDate[Sequelize.Op.lte] = new Date(endDate);
         }
 
-        // If the user gives a status (like "completed"), add it as a rule
         if (status) {
             filter.status = status;
         }
 
-        // Get the payments that match these rules from the database
         const payments = await Payment.findAll({
-            where: filter, // Apply the rules we made
-            order: [['createdAt', 'DESC']], // Sort payments from newest to oldest
+            where: filter,
+            order: [['paymentDate', 'DESC']],
         });
 
-        // Send the found payments back to the user
         res.status(200).json(payments);
     } catch (error) {
-        // If something goes wrong, send an error message
         console.error("Error fetching payment history:", error);
         res.status(500).json({ message: "An error occurred while retrieving payment history.", error: error.message });
     }
 };
 
-// Function to send reminders for unpaid or upcoming payments
-export const sendPaymentReminder = async (req, res) => {
-    const { studentId } = req.body;  // Get the student ID from the request body (the user asking for a reminder)
-
-    try {
-        // Get all upcoming or pending payments for this student from the database
-        const upcomingPayments = await Payment.findAll({
-            where: {
-                studentId,  // Find payments for this student
-                status: 'pending',      // Payments that are still pending
-                createdAt: {
-                    [Sequelize.Op.gt]: new Date()  // Get payments that are due in the future
-                }
-            },
-            order: [['createdAt', 'ASC']]  // Order by the earliest payment
-        });
-
-        // If there are no upcoming payments
-        if (upcomingPayments.length === 0) {
-            return res.status(200).json({ message: 'No upcoming payments for this student.' });
-        }
-
-        // Loop through each upcoming payment and send a reminder
-        const reminders = upcomingPayments.map(payment => {
-            return {
-                studentId: payment.studentId,
-                amount: payment.amount,
-                dueDate: payment.createdAt,
-                message: `Reminder: Your payment of ${payment.amount} is due on ${payment.createdAt}. Please make sure to pay before the due date.`
-            };
-        });
-
-        // Send reminders back as a response (in a real-world scenario, you'd send this via email or SMS)
-        res.status(200).json({ message: 'Reminder(s) sent successfully!', reminders });
-    } catch (error) {
-        // Handle any errors
-        console.error("Error sending payment reminders:", error); // Logs detailed error for debugging
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// Function to request a refund for a payment
 export const requestRefund = async (req, res) => {
-    const { paymentId } = req.body; // Extract payment ID from request body
+    const { paymentId } = req.body;
+
+    if (!paymentId) {
+        return res.status(400).json({ message: "Payment ID is required." });
+    }
 
     try {
-        // Find the payment record by ID
         const payment = await Payment.findByPk(paymentId);
 
-        // Validate if payment exists and its status is 'completed'
-        if (!payment || payment.status !== 'completed') {
-            return res.status(400).json({ message: 'Invalid refund request. Payment not found or not completed.' });
+        if (!payment) {
+            return res.status(404).json({ message: "Payment not found." });
         }
 
-        // Create a refund record
-        const refund = await Refund.create({
-            paymentId,
-            studentId: payment.studentId, // Use studentId instead of userId
-            amount: payment.amount,
-            status: 'pending', // Initial refund status is 'pending'
-        });
+        if (payment.status !== 'completed') {
+            return res.status(400).json({ message: "Only completed payments can be refunded." });
+        }
 
-        // Update the payment status to 'refunded'
+        payment.refundStatus = 'pending';
+        payment.refundAmount = payment.amount;
+        payment.refundDate = new Date();
         payment.status = 'refunded';
-        await payment.save(); // Save updated payment status
+        await payment.save();
 
-        // Send success response
         res.status(200).json({
             message: 'Refund request processed successfully.',
-            refund,
+            refundDetails: {
+                paymentId: payment.paymentId,
+                refundAmount: payment.refundAmount,
+                refundDate: payment.refundDate,
+                refundStatus: payment.refundStatus,
+            },
         });
     } catch (error) {
-        // Handle errors and send error response
-        console.error("Error processing refund request:", error); // Logs detailed error for debugging
+        console.error("Error processing refund request:", error);
         res.status(500).json({ message: error.message });
     }
 };
 
-// Function to generate a receipt for a completed payment
 export const generateReceipt = async (req, res) => {
-    const { paymentId } = req.params; // Get paymentId from request parameters
+    const { paymentId } = req.body;
 
+    if (!paymentId) {
+        return res.status(400).json({ message: "Payment ID is required to generate a receipt." });
+    }
     try {
-        // Find the payment associated with the given paymentId
         const payment = await Payment.findByPk(paymentId);
 
-        // Check if the payment exists and is successful
-        if (!payment || payment.status !== 'completed') {
-            return res.status(400).json({ message: 'Payment not found or not completed' });
+        if (!payment) {
+            return res.status(404).json({ message: "Payment not found." });
         }
 
-        // Generate a unique receipt number (you can use any method for this)
-        const receiptNumber = `RECEIPT-${paymentId}-${Date.now()}`;
+        if (payment.receiptNumber) {
+            return res.status(400).json({ message: "Receipt already generated for this payment." });
+        }
 
-        // Create the receipt record in the database
-        const receipt = await Receipt.create({
-            paymentId: payment.id, // Link the receipt to the payment
-            receiptNumber,
-            amount: payment.amount, // Store the payment amount in the receipt
-        });
+        payment.receiptNumber = generateReceiptNumber();
+        payment.receiptDate = new Date();
+        await payment.save();
 
-        // Return the receipt data to the user
-        res.status(201).json({
-            message: 'Receipt generated successfully',
-            receipt: {
-                receiptNumber: receipt.receiptNumber,
-                amount: receipt.amount,
-                dateIssued: receipt.dateIssued,
-            },
+        return res.status(200).json({
+            message: "Receipt successfully generated.",
+            receiptNumber: payment.receiptNumber,
+            receiptDate: payment.receiptDate,
+            paymentDetails: payment,
         });
     } catch (error) {
-        res.status(500).json({ message: error.message }); // Handle errors
+        console.error("Error generating receipt:", error);
+        return res.status(500).json({ message: "An error occurred while generating the receipt.", error: error.message });
     }
 };
