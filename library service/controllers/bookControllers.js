@@ -1,7 +1,4 @@
 import Book from '../models/bookModels.js'; 
-import Transaction from '../models/transactionModel.js';
-import Notification from '../models/notificationModel.js';
-import Fine from '../models/fineModel.js';
 import Student from '../../user manegment service/models/studentModels.js'
 import { Op } from 'sequelize';
 // Function to add a new book
