@@ -9,4 +9,4 @@ paymentRoutes.post('/history',  getPaymentHistory);
 paymentRoutes.post('/request-refund',  requestRefund);
 paymentRoutes.post('/generate-Receipt',generateReceipt);
 paymentRoutes.post('/calculate-fines', calculateFines);
-export default paymentRoutes; // Export the route to use in api.js
+export default paymentRoutes; 

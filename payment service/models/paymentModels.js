@@ -9,7 +9,7 @@ const Payment = sequelize.define('Payment', {
         autoIncrement: true,
     },
     studentId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
         reference:{
             model: Student,
