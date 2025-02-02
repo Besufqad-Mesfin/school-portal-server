@@ -15,7 +15,7 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    srudentId: {
+    studentId: {
         type: DataTypes.STRING,
         allowNull: false
     },
