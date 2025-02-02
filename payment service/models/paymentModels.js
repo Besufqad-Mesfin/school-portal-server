@@ -1,7 +1,7 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
 import BookTransaction from '../../library service/models/bookTransaction'; 
-
+import Student from '../../user manegment service/models/studentModels';
 const Payment = sequelize.define('Payment', {
     paymentId: { 
         type: DataTypes.INTEGER,
@@ -11,10 +11,18 @@ const Payment = sequelize.define('Payment', {
     studentId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        reference:{
+            model: Student,
+            key: 'studentId'
+        }
     },
     bookTransactionId: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        reference:{
+            model: BookTransaction,
+            key: 'bookTransactionId'
+        }
     },
     amount: {
         type: DataTypes.FLOAT,
