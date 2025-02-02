@@ -2,9 +2,8 @@ import Book from '../models/bookModels.js';
 import Transaction from '../models/transactionModel.js';
 import Notification from '../models/notificationModel.js';
 import Fine from '../models/fineModel.js';
-import User from '../models/userModel.js';
+import Student from '../../user manegment service/models/studentModels.js'
 import { Op } from 'sequelize';
-import nodemailer from 'nodemailer';
 // Function to add a new book
 export const addBook = async (req, res) => {
     const { title, author, isbn, availableCopies } = req.body; // Destructure the required fields
@@ -100,14 +99,12 @@ export const searchBooks = async (req, res) => {
     }
 };
 
-// Function to register a new user
-
 
 export const borrowBook = async (req, res) => {
     const { bookId, studentId } = req.body; 
     try {
         const book = await Book.findByPk(bookId);
-        const student = await User.findByPk(studentId);
+        const student = await Student.findByPk(studentId);
         if (!student) {
             return res.status(404).json({ message: 'Student not found' });
         }
@@ -173,14 +170,14 @@ export const sendDueDateReminder = async (req, res) => {
         });
         await notification.save();
 
-        const user = await User.findByPk(studentId); 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        const student = await Student.findByPk(studentId); 
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
         }
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL_USER,
+                student: process.env.EMAIL_Student,
                 pass: process.env.EMAIL_PASS
             }
         });
@@ -188,7 +185,7 @@ export const sendDueDateReminder = async (req, res) => {
 
         const mailOptions = {
             from: 'your-email@gmail.com',
-            to: user.email, 
+            to: student.email, 
             subject: 'Library Due Date Reminder',
             text: message 
         };
@@ -205,7 +202,7 @@ export const sendDueDateReminder = async (req, res) => {
 export const announceNewArrivals = async (req, res) => {
     const { message } = req.body;  
     try {
-        const students = await User.findAll(); 
+        const students = await Student.findAll(); 
 
         const notifications = students.map(student => {
             return new Notification({
@@ -259,7 +256,7 @@ export const generateUsageReports = async (req, res) => {
     try {
         const totalTransactions = await Transaction.count();
         const totalBooks = await Book.count();
-        const totalStudents = await User.count(); 
+        const totalStudents = await Student.count(); 
 
         res.status(200).json({
             totalTransactions,
