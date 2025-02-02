@@ -8,7 +8,7 @@ const BookTransaction = sequelize.define('BookTransaction', {
         type: DataTypes.INTEGER,
         references: {
             model: Book,
-            key: 'id'
+            key: 'bookid'
         },
         primaryKey: true, 
     },
@@ -16,7 +16,7 @@ const BookTransaction = sequelize.define('BookTransaction', {
         type: DataTypes.STRING,
         references: {
             model: Student,
-            key: 'id'
+            key: 'studentid'
         },
         primaryKey: true, 
     },
