@@ -1,6 +1,6 @@
 import Payment from '../models/paymentModels';
 import { Sequelize } from 'sequelize';
-
+import BookTransaction from '../../library service/models/bookTransaction';
 const generateReceiptNumber = () => {
     return 'ReceiptNumber-' + Math.random().toString(36).substr(2, 8).toUpperCase();
 };
@@ -131,6 +131,7 @@ export const requestRefund = async (req, res) => {
     }
 };
 
+
 export const generateReceipt = async (req, res) => {
     const { paymentId } = req.body;
 
@@ -161,5 +162,35 @@ export const generateReceipt = async (req, res) => {
     } catch (error) {
         console.error("Error generating receipt:", error);
         return res.status(500).json({ message: "An error occurred while generating the receipt.", error: error.message });
+    }
+};
+
+
+export const calculateFines = async (req, res) => {
+    const { borrowTransactionId } = req.body;  
+    try {
+        const transaction = await BookTransaction.findByPk(borrowTransactionId);  
+        if (!transaction) {
+            return res.status(404).json({ message: 'Transaction not found' });
+        }
+
+        const today = new Date();
+        let fine = 0;
+        if (!transaction.returnDate && today > transaction.dueDate) {
+            const daysOverdue = Math.ceil((today - transaction.dueDate) / (1000 * 60 * 60 * 24));
+            fine = daysOverdue * 0.5; 
+        }
+        if (fine > 100) {
+            fine = 100;
+        }
+        await Fine.upsert({
+            borrowTransactionId,  
+            amount: fine,
+            paid: false
+        });
+
+        res.status(200).json({ fine });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
