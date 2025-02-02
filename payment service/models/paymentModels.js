@@ -1,5 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import sequelize from '../config/database'; // Database connection
+import sequelize from '../config/database';
+import BookTransaction from '../../library service/models/bookTransaction'; 
 
 const Payment = sequelize.define('Payment', {
     paymentId: { 
@@ -10,6 +11,10 @@ const Payment = sequelize.define('Payment', {
     studentId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+    },
+    bookTransactionId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
     },
     amount: {
         type: DataTypes.FLOAT,
@@ -22,6 +27,7 @@ const Payment = sequelize.define('Payment', {
     type: {
         type: DataTypes.STRING,
         allowNull: false,
+        // may be fine ,monthly payment ,etc
     },
     paymentMethod: {
         type: DataTypes.STRING,
@@ -37,6 +43,7 @@ const Payment = sequelize.define('Payment', {
         allowNull: true, 
         unique: true,
     },
+
     accountNumber: {
         type: DataTypes.STRING,
         allowNull: true, 

@@ -183,7 +183,7 @@ export const calculateFines = async (req, res) => {
         if (fine > 100) {
             fine = 100;
         }
-        await Fine.upsert({
+        await Payment.upsert({
             borrowTransactionId,  
             amount: fine,
             paid: false
