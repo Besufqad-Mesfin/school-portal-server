@@ -15,6 +15,10 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    srudentId: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -23,10 +27,7 @@ const User = sequelize.define('User', {
             isEmail: true
         }
     },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
+    
 }, {
     timestamps: true
 });
