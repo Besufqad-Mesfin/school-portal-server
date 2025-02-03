@@ -1,7 +1,7 @@
 {
-  "name": "user-manegment-service",
+  "name": "grading-assessment-service",
   "version": "1.0.0",
-  "description": "This project is a backend server for a school portal application. It provides various functionalities to manage students, teachers, courses, and other school-related activities.",
+  "description": "This project is a backend server for a school portal application. It provides various functionalities to manage student grade, and assessment activities.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

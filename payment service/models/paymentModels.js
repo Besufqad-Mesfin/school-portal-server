@@ -1,16 +1,18 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import sequelize from '../config/database';
-import BookTransaction from '../../library service/models/bookTransaction'; 
-import Student from '../../user manegment service/models/studentModels';
+import BookTransaction from '../../library service/models/bookTransaction.js'; 
+import Student from '../../user manegment service/models/studentModels.js';
+import sequelize from '../config/db.js'; 
+
 const Payment = sequelize.define('Payment', {
-    paymentId: { 
+    paymentId: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
+        autoIncrement: true,  // Automatically increments for each new payment
+        primaryKey: true,     // Marks this field as the primary key
     },
     studentId: {
         type: DataTypes.STRING,
         allowNull: false,
+
         reference:{
             model: Student,
             key: 'studentId'
@@ -83,9 +85,15 @@ const Payment = sequelize.define('Payment', {
         allowNull: true,
         unique: true,
     },
+
     receiptDate: {
         type: DataTypes.DATE,
         allowNull: true,
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: Sequelize.NOW,
     },
 }, {
     timestamps: true,
