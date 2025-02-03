@@ -1,6 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import sequelize from '../config/db.js'; 
-const Student = sequelize.define('Student', {
+const Student = sequelize.define('Students', {
   studentId: {
     type: DataTypes.STRING, 
     unique: true,
