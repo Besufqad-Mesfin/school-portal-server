@@ -1,4 +1,6 @@
 import { Sequelize, DataTypes } from 'sequelize';
+import BookTransaction from '../../library service/models/bookTransaction.js'; 
+import Student from '../../user manegment service/models/studentModels.js';
 import sequelize from '../config/db.js'; 
 
 const Payment = sequelize.define('Payment', {
@@ -8,43 +10,85 @@ const Payment = sequelize.define('Payment', {
         primaryKey: true,     // Marks this field as the primary key
     },
     studentId: {
-        type: DataTypes.STRING, 
+        type: DataTypes.STRING,
         allowNull: false,
-       
+
+        reference:{
+            model: Student,
+            key: 'studentId'
+        }
+    },
+    bookTransactionId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        reference:{
+            model: BookTransaction,
+            key: 'bookTransactionId'
+        }
     },
     amount: {
-        type: DataTypes.FLOAT, 
-        allowNull: false, 
-        validate: {
-            isPositive(value) {
-                if (value <= 0) {
-                    throw new Error('Amount must be a positive number');
-                }
-            }
-        }
+        type: DataTypes.FLOAT,
+        allowNull: false,
     },
     currency: {
-        type: DataTypes.STRING, 
-        allowNull: false, 
-        validate: {
-            isIn: {
-                args: [['USD', 'EUR', 'BIRR','GBP', 'JPY']], 
-                msg: "Currency must be one of 'USD', 'EUR', 'GBP', 'JPY'"
-            }
-        }
+        type: DataTypes.STRING,
+        defaultValue: 'BIRR',
+    },
+    type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        // may be fine ,monthly payment ,etc
+    },
+    paymentMethod: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'cash', 
+    },
+    bankName: {
+        type: DataTypes.STRING,
+        allowNull: true, 
+    },
+    transactionId: {
+        type: DataTypes.STRING,
+        allowNull: true, 
+        unique: true,
+    },
+
+    accountNumber: {
+        type: DataTypes.STRING,
+        allowNull: true, 
+    },
+    paymentDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
     },
     status: {
         type: DataTypes.STRING,
         defaultValue: 'pending', 
     },
-    type: {
+    refundStatus: {
         type: DataTypes.STRING,
-        allowNull: false, 
+        defaultValue: 'none', 
     },
-   
-    createdAt: {
+    refundAmount: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+        defaultValue: 0,
+    },
+    refundDate: {
         type: DataTypes.DATE,
-        defaultValue: Sequelize.NOW, 
+        allowNull: true,
+    },
+    receiptNumber: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true,
+    },
+
+    receiptDate: {
+        type: DataTypes.DATE,
+        allowNull: true,
     },
     updatedAt: {
         type: DataTypes.DATE,
@@ -52,8 +96,8 @@ const Payment = sequelize.define('Payment', {
         defaultValue: Sequelize.NOW,
     },
 }, {
-    timestamps: true, // Automatically add `createdAt` and `updatedAt`
+    timestamps: true,
+    tableName: 'payments',
 });
-
 
 export default Payment;

@@ -1,8 +1,8 @@
 import express from 'express';
-import makePayment from './paymentRoutes.js'; 
+import paymentRoutes from './paymentRoutes.js'; 
 const api = express.Router(); 
 
 
-api.use('/payments', makePayment);
+api.use('/api', paymentRoutes);
 
 export default api; 

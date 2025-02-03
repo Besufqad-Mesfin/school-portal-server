@@ -1,12 +1,12 @@
 import express from 'express';
-import { createPayment ,getPaymentHistory, verifyPayment } from '../controllers/paymentControllers'; 
-
-import authMiddleware from '../Middleware/authMiddleware.js'; 
+import { createPayment ,getPaymentHistory, requestRefund,calculateFines } from '../controllers/paymentControllers'; 
+import authMiddleware from '../Middleware/authMiddleware.js';
 
 const paymentRoutes = express.Router(); 
 
-paymentRoutes.post('/create-payment', authMiddleware, createPayment); 
-paymentRoutes.post('/history', authMiddleware, getPaymentHistory); 
-paymentRoutes.post('/verify-payment', authMiddleware, verifyPayment);
+paymentRoutes.post('/create-payment',  createPayment); 
+paymentRoutes.post('/history',  getPaymentHistory); 
+paymentRoutes.post('/request-refund',  requestRefund);
+paymentRoutes.post('/calculate-fines', calculateFines);
 
-export default paymentRoutes; // Export the route to use in api.js
+export default paymentRoutes;
