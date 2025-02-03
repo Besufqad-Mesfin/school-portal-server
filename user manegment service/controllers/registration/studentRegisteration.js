@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'; // Include this line
-import Student from '../../models/studentModels.js';
+import Student from '../../models/studentModel.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 
