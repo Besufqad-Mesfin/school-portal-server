@@ -79,7 +79,7 @@ const changeGrade = async (req, res) => {
     }
 };
 
-export = {
+export  {
     insertMarkGrade,
     getStudentGrades,
     changeGrade,
