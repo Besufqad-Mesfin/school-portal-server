@@ -131,41 +131,6 @@ export const requestRefund = async (req, res) => {
     }
 };
 
-
-export const generateReceipt = async (req, res) => {
-    const { paymentId } = req.body;
-
-    if (!paymentId) {
-        return res.status(400).json({ message: "Payment ID is required to generate a receipt." });
-    }
-    try {
-        const payment = await Payment.findByPk(paymentId);
-
-        if (!payment) {
-            return res.status(404).json({ message: "Payment not found." });
-        }
-
-        if (payment.receiptNumber) {
-            return res.status(400).json({ message: "Receipt already generated for this payment." });
-        }
-
-        payment.receiptNumber = generateReceiptNumber();
-        payment.receiptDate = new Date();
-        await payment.save();
-
-        return res.status(200).json({
-            message: "Receipt successfully generated.",
-            receiptNumber: payment.receiptNumber,
-            receiptDate: payment.receiptDate,
-            paymentDetails: payment,
-        });
-    } catch (error) {
-        console.error("Error generating receipt:", error);
-        return res.status(500).json({ message: "An error occurred while generating the receipt.", error: error.message });
-    }
-};
-
-
 export const calculateFines = async (req, res) => {
     const { borrowTransactionId } = req.body;  
     try {
