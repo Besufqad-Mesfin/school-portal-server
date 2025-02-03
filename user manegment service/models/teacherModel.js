@@ -3,7 +3,7 @@ import sequelize from "../config/db.js"; // Import the initialized sequelize ins
 import { DataTypes } from "sequelize";
 
 // Define the UserTeacher model using the imported sequelize instance
-const teacherModel = sequelize.define("teacherModel", {
+const teacherModel = sequelize.define("Teachers", {
   teacherId: {
     type: DataTypes.STRING,
     allowNull: false,
