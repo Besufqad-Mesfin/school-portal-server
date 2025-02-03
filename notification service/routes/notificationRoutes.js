@@ -1,50 +1,61 @@
 import express from 'express';
-import notificationController from '../controllers/notificationController.js';
+import { 
+    getStudentGradeNotifications, 
+    getAnnouncements, 
+    getStudentUnreadNotifications, 
+    getTeacherNotifications, 
+    getTeacherUnreadNotificationCount, 
+    getTeacherUnreadNotifications, 
+    getAdminUnreadNotifications, 
+    getAdminNotifications, 
+    postAdminAlertNotification, 
+    postTeacherAssignmentNotification, 
+    sendNotification, 
+    bulkSendNotifications, 
+    markNotificationAsRead, 
+    markNotificationAsUnread, 
+    bulkMarkNotificationsAsRead, 
+    bulkMarkNotificationsAsUnread, 
+    deleteNotification, 
+    bulkDeleteNotifications, 
+    updateNotification, 
+    updateNotificationSettings 
+} from '../controllers/notificationController.js';
 
 const router = express.Router();
 
-// Route to get student grade notifications
+// Student Notifications
 router.get('/student/:studentId/grades', getStudentGradeNotifications);
+router.get('/student/:studentId/unread', getStudentUnreadNotifications);
 
-// Route to get general announcements notifications
+// Teacher Notifications
+router.get('/teacher/:teacherId', getTeacherNotifications);
+router.get('/teacher/:teacherId/unread-count', getTeacherUnreadNotificationCount);
+router.get('/teacher/:teacherId/unread', getTeacherUnreadNotifications);
+router.post('/teacher/:teacherId/assignments', postTeacherAssignmentNotification);
+
+// Admin Notifications
+router.get('/admin/:adminId/unread', getAdminUnreadNotifications);
+router.get('/admin/:adminId', getAdminNotifications);
+router.post('/admin/:adminId/alerts', postAdminAlertNotification);
+
+// General Notifications
 router.get('/announcements', getAnnouncements);
-
-// Route to get teacher assignment notifications
-router.get('/teacher/:teacherId/assignments', getTeacherAssignmentNotifications);
-
-// Route to get admin alert notifications
-router.get('/admin/:adminId/alerts', getAdminAlertNotifications);
-
-// send notification to student
 router.post('/send', sendNotification);
-
-// bulk send notifications
 router.post('/bulk', bulkSendNotifications);
 
-// mark notification as read
+// Mark Notifications as Read/Unread
 router.patch('/:notificationId/read', markNotificationAsRead);
-
-// mark notification as unread
 router.patch('/:notificationId/unread', markNotificationAsUnread);
-
-// bulk mark notifications as read
 router.patch('/bulk/read', bulkMarkNotificationsAsRead);
-
-// bulk mark notifications as unread
 router.patch('/bulk/unread', bulkMarkNotificationsAsUnread);
 
-// delete notification
+// Delete Notifications
 router.delete('/:notificationId', deleteNotification);
-
-// bulk delete notifications
 router.delete('/bulk', bulkDeleteNotifications);
 
-// update notification
+// Update Notifications
 router.put('/:notificationId', updateNotification);
-
-// update notification settings
 router.put('/settings/:userId', updateNotificationSettings);
-
-
 
 export default router;
