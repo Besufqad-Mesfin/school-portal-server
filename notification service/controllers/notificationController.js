@@ -1,4 +1,4 @@
-import Notification from '../models/Notification.js';
+import Notification from '../models/notificationModel.js';
 
 const getStudentGradeNotifications = async (req, res) => {
     try {
