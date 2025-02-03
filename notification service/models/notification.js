@@ -1,39 +1,70 @@
-// notificationService/models/Notification.js
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import { Sequelize, DataTypes } from 'sequelize';
+import sequelize from '../config/db.js';
 
+// Notification Schema
 const Notification = sequelize.define('Notification', {
     notificationId: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: DataTypes.STRING,
         primaryKey: true,
     },
-    studentId: {
-        type: DataTypes.UUID,
-        allowNull: true,
-    },
-    teacherId: {
-        type: DataTypes.UUID,
-        allowNull: true,
-    },
-    adminId: {
-        type: DataTypes.UUID,
-        allowNull: true,
-    },
-    type: {
-        type: DataTypes.ENUM('grade', 'announcement', 'assignment', 'alert'),
+    title: {
+        type: DataTypes.STRING,
         allowNull: false,
     },
     message: {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    recipients: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: true,
+    },
+    role: {
+        type: DataTypes.ENUM('student', 'teacher', 'admin', 'all'),
+        allowNull: false,
+    },
+    type: {
+        type: DataTypes.ENUM('in-app', 'email', 'sms', 'assignment', 'grade', 'alert', 'announcement'),
+        allowNull: false,
+    },
     status: {
-        type: DataTypes.ENUM('unread', 'read'),
+        type: DataTypes.ENUM('sent', 'read', 'unread', 'deleted'),
         defaultValue: 'unread',
     },
+    metadata: {
+        type: DataTypes.JSONB, // To store additional data like grade details, assignment info, etc.
+        allowNull: true,
+    },
+    timestamp: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    }
 }, {
     timestamps: true,
+    tableName: 'notifications'
 });
 
-export default Notification;
+// User Settings Schema
+const UserSettings = sequelize.define('UserSettings', {
+    userId: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    email: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
+    inApp: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    },
+    sms: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+    }
+}, {
+    timestamps: true,
+    tableName: 'user_settings'
+});
+
+export { Notification, UserSettings };
