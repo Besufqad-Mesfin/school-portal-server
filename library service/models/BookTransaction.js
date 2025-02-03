@@ -1,24 +1,33 @@
 import { Sequelize, DataTypes } from 'sequelize'; 
-import sequelize from '../config/database.js';
+import sequelize from '../config/db.js';
 import Book from './bookModels.js'; 
 import Student from '../../user manegment service/models/studentModels.js';
 
 const BookTransaction = sequelize.define('BookTransaction', {
+    bookTransactionId: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
     bookId: {
         type: DataTypes.INTEGER,
         references: {
             model: Book,
-            key: 'bookid'
+            key: 'bookid',
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL'
         },
-        primaryKey: true, 
+        allowNull: false,
     },
     studentId: {
         type: DataTypes.STRING,
         references: {
             model: Student,
-            key: 'studentid'
+            key: 'studentid',
+            onUpdate: 'CASCADE',
+            onDelete: 'SET NULL'
         },
-        primaryKey: true, 
+        allowNull: false,
     },
     dueDate: {
         type: DataTypes.DATE,
@@ -27,6 +36,13 @@ const BookTransaction = sequelize.define('BookTransaction', {
     returnDate: {
         type: DataTypes.DATE,
         allowNull: true,
+        validate: {
+            isAfterDueDate(value) {
+                if (value && this.dueDate && new Date(value) <= new Date(this.dueDate)) {
+                    throw new Error('Return date must be after the due date.');
+                }
+            }
+        }
     },
     returned: {
         type: DataTypes.BOOLEAN,
@@ -37,5 +53,8 @@ const BookTransaction = sequelize.define('BookTransaction', {
     tableName: 'book_transactions'
 });
 
+// Model Associations
+BookTransaction.belongsTo(Book, { foreignKey: 'bookId' });
+BookTransaction.belongsTo(Student, { foreignKey: 'studentId' });
 
 export default BookTransaction;
