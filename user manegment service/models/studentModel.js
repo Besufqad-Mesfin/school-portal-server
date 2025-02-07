@@ -46,6 +46,10 @@ const Student = sequelize.define('Students', {
   kebele: {
     type: DataTypes.STRING,
     allowNull: false,
-  } 
+  }
+}
+,
+{
+  timestamps: false,
 });
 export default Student;

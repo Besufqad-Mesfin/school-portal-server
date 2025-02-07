@@ -1,18 +1,18 @@
 import bcrypt from 'bcryptjs';
-import teacherModel from '../../models/teacherModel.js';
+import teacherModel from '../../models/teacherModel.js'; // Adjusted to match your model file name
 import { Op } from 'sequelize'; // Import Sequelize operators
 
 const registerTeacher = async (req, res) => {
     const {
-        firstName, // Updated to match the model's attribute
-        lastName,  // Updated to match the model's attribute
+        firstName,
+        lastName,
         email,
-        teacherId, // Updated to match the model's attribute
-        educationalStatus, // Updated to match the model's attribute
+        teacherId,
+        educationalStatus,
         password,
         subject,
-        gender, // Updated to match the model's attribute
-        contactNo, // Updated to match the model's attribute
+        gender,
+        contactNo,
     } = req.body;
 
     // Validate required fields
@@ -36,7 +36,7 @@ const registerTeacher = async (req, res) => {
         // Check if email or teacherId already exists
         const existingTeacher = await teacherModel.findOne({
             where: {
-                [Op.or]: [ // Changed to `Op.or` to match either condition
+                [Op.or]: [ // Changed to `Op.or` to check for either email or teacherId
                     { email: email },
                     { teacherId: teacherId },
                 ],
@@ -54,15 +54,15 @@ const registerTeacher = async (req, res) => {
 
         // Save teacher to the database
         const newTeacher = await teacherModel.create({
-            firstName,       // Aligned to model
-            lastName,        // Aligned to model
-            email,
-            teacherId,       // Aligned to model
-            educationalStatus, // Aligned to model
-            password: hashedPassword, // Save hashed password
-            subject,
-            gender,          // Aligned to model
-            contactNo,       // Aligned to model
+            firstName,       // Corresponds to the model's firstName
+            lastName,        // Corresponds to the model's lastName
+            email,           // Corresponds to the model's email
+            teacherId,       // Corresponds to the model's teacherId
+            educationalStatus, // Corresponds to the model's educationalStatus
+            password: hashedPassword, // Store hashed password in the model
+            subject,         // Corresponds to the model's subject
+            gender,          // Corresponds to the model's gender
+            contactNo,       // Corresponds to the model's contactNo
         });
 
         res.status(201).json({
