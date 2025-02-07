@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import TeacherModel from "../../models/teacherModels.js"; // Adjust the path to your Teacher model
+import TeacherModel from "../../models/teacherModel.js"; // Adjust the path to your Teacher model
 
 /**
  * Controller to handle password update requests for teachers.

@@ -1,4 +1,4 @@
-import studentModel from "../../models/studentModels.js"; // Ensure the path and extension are correct
+import studentModel from "../../models/studentModel.js"; // Ensure the path and extension are correct
 import bcrypt from 'bcryptjs'; 
 
 const studentLogin = async (req, res) => {
