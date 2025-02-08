@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
  * Controller to handle password update requests for admins.
  */
 export async function changePassword(req, res) {
+
   try {
     const { currentPassword, newPassword, email } = req.body; // Only newPassword is required since validation is done on the frontend.
 
