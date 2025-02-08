@@ -3,6 +3,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import api from './routes/api.js';
 import sequelize from './config/db.js'; 
+
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
@@ -15,6 +16,7 @@ app.use('/api', api);
 
 app.listen(PORT, async () => {
   try {
+    // Sync database models
     await sequelize.sync();
     console.log("Database connected and models synced");
   } catch (err) {
@@ -22,3 +24,6 @@ app.listen(PORT, async () => {
   }
   console.log(`Server is running on port ${PORT}`);
 });
+
+
+

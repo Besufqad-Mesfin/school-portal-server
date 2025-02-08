@@ -1,6 +1,6 @@
 import Book from '../models/bookModels.js'; 
-import Student from '../../user manegment service/models/studentModels.js';
-import BookTransaction from '../models/bookTransactionModel.js'; // Import BookTransaction
+import Student from '../../user manegment service/models/studentModel.js';
+import BookTransaction from '../models/BookTransaction.js'; 
 import { Op } from 'sequelize';
 
 export const addBook = async (req, res) => {
@@ -17,8 +17,8 @@ export const addBook = async (req, res) => {
 };
 
 export const updateBook = async (req, res) => {
-    const { bookId } = req.params;
-    const { title, author, isbn, totalCopies, availableCopies } = req.body; 
+    const { bookId } = req.body;
+    const { title, author, isbn, availableCopies } = req.body; 
     if (!title || !author || !isbn || !availableCopies) {
         return res.status(400).json({ message: 'at least one (title, author, isbn, availableCopies) are required.' });
     }
@@ -29,7 +29,7 @@ export const updateBook = async (req, res) => {
             return res.status(404).json({ message: 'Book not found' }); 
         }
 
-        await book.update({ title, author, isbn, totalCopies, availableCopies }); 
+        await book.update({ title, author, isbn, availableCopies }); 
         res.status(200).json(book); 
     } catch (error) {
         res.status(500).json({ message: error.message }); 
@@ -39,13 +39,15 @@ export const updateBook = async (req, res) => {
 export const deleteBook = async (req, res) => {
     const { bookId } = req.params; 
     try {
-        const book = await Book.findByPk(bookId); 
-        if (!book) return res.status(404).json({ message: 'Book not found' }); 
+        const book = await Book.findByPk(bookId);
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
+        }
 
-        await book.destroy(); 
+        await book.destroy();
         res.status(204).send(); 
     } catch (error) {
-        res.status(500).json({ message: error.message }); 
+        res.status(500).json({ message: error.message });
     }
 };
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import reportRoutes from './routes/reportRoutes.js';
+import bookRoutes from './bookRoutes.js';
 // Import other routes if necessary
 
 const api = express.Router();
@@ -8,7 +8,7 @@ const api = express.Router();
 api.use(express.json());
 
 // Use reporting routes
-api.use('/book', reportRoutes);
+api.use('/book', bookRoutes);
 
 // Include other routes as needed
 

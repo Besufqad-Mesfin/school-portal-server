@@ -1,34 +1,35 @@
+// models/bookModels.js
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import sequelize from '../config/db.js';
 
 const Book = sequelize.define('Book', {
-    bookid: {
+    bookId: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
     },
     title: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
     author: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
     isbn: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
     },
     availableCopies: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
-            min: 0
-        }
-    }
+            min: 0,
+        },
+    },
 }, {
-    timestamps: true
+    timestamps: true,
 });
 
 export default Book;

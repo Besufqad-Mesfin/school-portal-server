@@ -1,6 +1,7 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import BookTransaction from '../../library service/models/bookTransaction.js'; 
-import Student from '../../user manegment service/models/studentModels.js';
+// import BookTransaction from '../../library service/models/BookTransaction.js'; 
+import BookTransaction from '../../library service/models/BookTransaction.js';
+import Student from '../../user manegment service/models/studentModel.js';
 import sequelize from '../config/db.js'; 
 
 const Payment = sequelize.define('Payment', {

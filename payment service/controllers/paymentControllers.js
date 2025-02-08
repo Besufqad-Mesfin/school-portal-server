@@ -1,6 +1,6 @@
-import Payment from '../models/paymentModels';
+import Payment from '../models/paymentModels.js';
 import { Sequelize } from 'sequelize';
-import BookTransaction from '../../library service/models/bookTransaction';
+import BookTransaction from '../../library service/models/BookTransaction.js';
 const generateReceiptNumber = () => {
     return 'ReceiptNumber-' + Math.random().toString(36).substr(2, 8).toUpperCase();
 };
@@ -40,7 +40,7 @@ export const createPayment = async (req, res) => {
             bankName: paymentMethod === 'bank_transfer' ? bankName : null,
             transactionId: paymentMethod === 'bank_transfer' ? transactionId : null,
             accountNumber: paymentMethod === 'bank_transfer' ? accountNumber : null,
-            status: paymentMethod === 'bank_transfer' ? 'pending' : 'completed', 
+            status: paymentMethod === 'bank_transfer' ?'completed':'pending', 
             paymentDate: new Date(),
             receiptNumber,
             receiptDate: new Date(),
@@ -63,7 +63,7 @@ export const createPayment = async (req, res) => {
 
 
 export const getPaymentHistory = async (req, res) => {
-    const { studentId } = req.params; 
+    const { studentId } = req.body; 
     const { startDate, endDate, status } = req.query; 
 
     if (!studentId) {
