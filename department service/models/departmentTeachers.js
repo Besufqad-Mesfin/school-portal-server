@@ -1,5 +1,7 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import { sequelize } from '../config/database.js'; // Ensure this points to your configured Sequelize instance
+import Department from './departmentModel.js';
+import Teacher from './TeacherModel.js';
 
 const DepartmentTeachers = sequelize.define('DepartmentTeachers', {
   departmentId: {
