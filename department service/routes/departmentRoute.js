@@ -1,28 +1,39 @@
 import express from 'express';  // Importing express
 import {
     createDepartment,
-    getdepartment,
+    getDepartments,
     getDepartmentById,
     updateDepartment,
     deleteDepartment,
-  } from "../controllers/department.js";  // Importing the course controller methods
-  
-  const departmentRouter  = express.Router();
-  
-  // Route to create a new course
-  departmentRouter .post('/department', createDepartment);
-  
-  // Route to get all department
-  departmentRouter .get('/department', getdepartment);
-  
-  // Route to get a specific course by its ID
-  departmentRouter .get('/department/:dept_id', getDepartmentById);
-  
-  // Route to update a course by its ID
-  departmentRouter .put('/department/:dept_id', updateDepartment);
-  
-  // Route to delete a course by its ID
-  departmentRouter .delete('/department/:dept_id', deleteDepartment);
-  
-  export default departmentRouter ;
-  
+    addTeacherToDepartment,
+    getDepartmentTeachers,
+    removeTeacherFromDepartment
+} from "../controllers/department.js";  // Importing the department controller methods
+
+const departmentRouter  = express.Router();
+
+// Route to create a new department
+departmentRouter.post('/department', createDepartment);
+
+// Route to get all departments
+departmentRouter.get('/department', getDepartments);
+
+// Route to get a specific department by its ID
+departmentRouter.get('/department/:id', getDepartmentById);
+
+// Route to update a department by its ID
+departmentRouter.put('/department/:id', updateDepartment);
+
+// Route to delete a department by its ID
+departmentRouter.delete('/department/:id', deleteDepartment);
+
+// Route to add a teacher to a department
+departmentRouter.post('/department/teacher', addTeacherToDepartment);
+
+// Route to get all teachers in a department
+departmentRouter.get('/department/:departmentId/teachers', getDepartmentTeachers);
+
+// Route to remove a teacher from a department
+departmentRouter.delete('/department/teacher', removeTeacherFromDepartment);
+
+export default departmentRouter;
