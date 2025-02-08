@@ -1,24 +1,24 @@
 import Department from '../models/department.js';  // Import the Department model
+import Teacher from '../models/teacher.js';  // Import the Teacher model
+import DepartmentTeachers from '../models/departmentTeacher.js';  // Import the DepartmentTeachers model
 
 // Controller to create a new department
 export const createDepartment = async (req, res) => {
   try {
-    const { departmentId, name, description } = req.body;
+    const { name, description, headId } = req.body;
 
     // Create a new department entry
     const newDepartment = await Department.create({
-      departmentId,
       name,
-      description
+      description,
+      headId
     });
 
-    // Send a success response
     res.status(201).json({
       message: 'Department created successfully',
       data: newDepartment
     });
   } catch (error) {
-    // Send an error response if something goes wrong
     res.status(500).json({
       message: 'Error creating department',
       error: error.message
@@ -29,16 +29,13 @@ export const createDepartment = async (req, res) => {
 // Controller to get all departments
 export const getDepartments = async (req, res) => {
   try {
-    // Fetch all departments from the database
     const departments = await Department.findAll();
 
-    // Send a success response with the list of departments
     res.status(200).json({
       message: 'Departments fetched successfully',
       data: departments
     });
   } catch (error) {
-    // Send an error response if something goes wrong
     res.status(500).json({
       message: 'Error fetching departments',
       error: error.message
@@ -46,27 +43,21 @@ export const getDepartments = async (req, res) => {
   }
 };
 
-// Controller to get a specific department by its ID
+// Controller to get a specific department by ID
 export const getDepartmentById = async (req, res) => {
   try {
-    const { departmentId } = req.params;
-
-    // Fetch a specific department by its ID
-    const department = await Department.findOne({ where: { departmentId } });
+    const { id } = req.params;
+    const department = await Department.findOne({ where: { id } });
 
     if (!department) {
-      return res.status(404).json({
-        message: 'Department not found'
-      });
+      return res.status(404).json({ message: 'Department not found' });
     }
 
-    // Send a success response with the department data
     res.status(200).json({
       message: 'Department fetched successfully',
       data: department
     });
   } catch (error) {
-    // Send an error response if something goes wrong
     res.status(500).json({
       message: 'Error fetching department',
       error: error.message
@@ -74,34 +65,29 @@ export const getDepartmentById = async (req, res) => {
   }
 };
 
-// Controller to update a department by its ID
+// Controller to update a department by ID
 export const updateDepartment = async (req, res) => {
   try {
-    const { departmentId } = req.params;
-    const { name, description } = req.body;
+    const { id } = req.params;
+    const { name, description, headId } = req.body;
 
-    // Find the department by its ID
-    const department = await Department.findOne({ where: { departmentId } });
+    const department = await Department.findOne({ where: { id } });
 
     if (!department) {
-      return res.status(404).json({
-        message: 'Department not found'
-      });
+      return res.status(404).json({ message: 'Department not found' });
     }
 
-    // Update the department information
     department.name = name || department.name;
     department.description = description || department.description;
+    department.headId = headId || department.headId;
 
-    await department.save(); // Save the updated department
+    await department.save();
 
-    // Send a success response
     res.status(200).json({
       message: 'Department updated successfully',
       data: department
     });
   } catch (error) {
-    // Send an error response if something goes wrong
     res.status(500).json({
       message: 'Error updating department',
       error: error.message
@@ -109,31 +95,73 @@ export const updateDepartment = async (req, res) => {
   }
 };
 
-// Controller to delete a department by its ID
+// Controller to delete a department by ID
 export const deleteDepartment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const department = await Department.findOne({ where: { id } });
+
+    if (!department) {
+      return res.status(404).json({ message: 'Department not found' });
+    }
+
+    await department.destroy();
+    res.status(200).json({ message: 'Department deleted successfully' });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error deleting department',
+      error: error.message
+    });
+  }
+};
+
+// Controller to add a teacher to a department
+export const addTeacherToDepartment = async (req, res) => {
+  try {
+    const { departmentId, teacherId } = req.body;
+    
+    await DepartmentTeachers.create({ departmentId, teacherId });
+    res.status(201).json({ message: 'Teacher added to department successfully' });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error adding teacher to department',
+      error: error.message
+    });
+  }
+};
+
+// Controller to get all teachers in a department
+export const getDepartmentTeachers = async (req, res) => {
   try {
     const { departmentId } = req.params;
 
-    // Find the department by its ID
-    const department = await Department.findOne({ where: { departmentId } });
+    const teachers = await DepartmentTeachers.findAll({
+      where: { departmentId },
+      include: [{ model: Teacher }]
+    });
 
-    if (!department) {
-      return res.status(404).json({
-        message: 'Department not found'
-      });
-    }
-
-    // Delete the department
-    await department.destroy();
-
-    // Send a success response
     res.status(200).json({
-      message: 'Department deleted successfully'
+      message: 'Teachers fetched successfully',
+      data: teachers
     });
   } catch (error) {
-    // Send an error response if something goes wrong
     res.status(500).json({
-      message: 'Error deleting department',
+      message: 'Error fetching teachers',
+      error: error.message
+    });
+  }
+};
+
+// Controller to remove a teacher from a department
+export const removeTeacherFromDepartment = async (req, res) => {
+  try {
+    const { departmentId, teacherId } = req.body;
+    
+    await DepartmentTeachers.destroy({ where: { departmentId, teacherId } });
+    res.status(200).json({ message: 'Teacher removed from department successfully' });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error removing teacher from department',
       error: error.message
     });
   }
