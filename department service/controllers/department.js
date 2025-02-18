@@ -1,4 +1,5 @@
-import Department from '../models/department.js';  // Import the Department model
+import DepartmentTeachers from '../models/departmentTeachers.js';
+import Department from '../models/departmentModel.js';  // Import the Department model
 
 // Controller to create a new department
 export const createDepartment = async (req, res) => {
@@ -9,7 +10,7 @@ export const createDepartment = async (req, res) => {
     const newDepartment = await Department.create({
       departmentId,
       name,
-      description
+      headName,
     });
 
     // Send a success response
@@ -78,7 +79,7 @@ export const getDepartmentById = async (req, res) => {
 export const updateDepartment = async (req, res) => {
   try {
     const { departmentId } = req.params;
-    const { name, description } = req.body;
+    const { name, headName } = req.body;
 
     // Find the department by its ID
     const department = await Department.findOne({ where: { departmentId } });
@@ -91,7 +92,7 @@ export const updateDepartment = async (req, res) => {
 
     // Update the department information
     department.name = name || department.name;
-    department.description = description || department.description;
+    department.head = headName || department.headName;
 
     await department.save(); // Save the updated department
 
@@ -134,6 +135,86 @@ export const deleteDepartment = async (req, res) => {
     // Send an error response if something goes wrong
     res.status(500).json({
       message: 'Error deleting department',
+      error: error.message
+    });
+  }
+};
+
+export const assignTeacherToDepartment = async (req, res) => {
+  try {
+    const { departmentId, teacherId } = req.body;
+
+    // Create a new record in DepartmentTeachers
+    const assignment = await DepartmentTeachers.create({
+      departmentId,
+      teacherId
+    });
+
+    res.status(201).json({
+      message: 'Teacher assigned to department successfully',
+      data: assignment
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error assigning teacher to department',
+      error: error.message
+    });
+  }
+};
+
+// Controller to get all teacher assignments for departments
+export const getDepartmentTeachers = async (req, res) => {
+  try {
+    const assignments = await DepartmentTeachers.findAll();
+    res.status(200).json({
+      message: 'Department teachers fetched successfully',
+      data: assignments
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching department teachers',
+      error: error.message
+    });
+  }
+};
+
+// Controller to get teachers assigned to a specific department
+export const getTeachersByDepartmentId = async (req, res) => {
+  try {
+    const { departmentId } = req.params;
+    const teachers = await DepartmentTeachers.findAll({ where: { departmentId } });
+
+    res.status(200).json({
+      message: 'Teachers for department fetched successfully',
+      data: teachers
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error fetching teachers for department',
+      error: error.message
+    });
+  }
+};
+
+// Controller to remove a teacher from a department
+export const removeTeacherFromDepartment = async (req, res) => {
+  try {
+    const { departmentId, teacherId } = req.params;
+
+    const assignment = await DepartmentTeachers.findOne({
+      where: { departmentId, teacherId }
+    });
+
+    if (!assignment) {
+      return res.status(404).json({ message: 'Teacher not found in department' });
+    }
+
+    await assignment.destroy();
+
+    res.status(200).json({ message: 'Teacher removed from department successfully' });
+  } catch (error) {
+    res.status(500).json({
+      message: 'Error removing teacher from department',
       error: error.message
     });
   }

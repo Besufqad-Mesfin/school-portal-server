@@ -1,27 +1,29 @@
 import express from 'express';
 import {
   createDepartment,
-  getdepartment,
+  getDepartments,
   getDepartmentById,
   updateDepartment,
   deleteDepartment,
-} from "../controllers/department.js";  // Importing the course controller methods
+  assignTeacherToDepartment,
+  getDepartmentTeachers,
+  getTeachersByDepartmentId,
+  removeTeacherFromDepartment
+} from '../controllers/department.js';
 
 const router = express.Router();
 
-// Route to create a new course
+// Department Routes
 router.post('/department', createDepartment);
+router.get('/department', getDepartments);
+router.get('/department/:departmentId', getDepartmentById);
+router.put('/department/:departmentId', updateDepartment);
+router.delete('/department/:departmentId', deleteDepartment);
 
-// Route to get all department
-router.get('/department', getdepartment);
-
-// Route to get a specific course by its ID
-router.get('/department/:dept_id', getDepartmentById);
-
-// Route to update a course by its ID
-router.put('/department/:dept_id', updateDepartment);
-
-// Route to delete a course by its ID
-router.delete('/department/:dept_id', deleteDepartment);
+// Department-Teacher Relationship Routes
+router.post('/department/assign-teacher', assignTeacherToDepartment);
+router.get('/department/teachers', getDepartmentTeachers);
+router.get('/department/:departmentId/teachers', getTeachersByDepartmentId);
+router.delete('/department/:departmentId/teacher/:teacherId', removeTeacherFromDepartment);
 
 export default router;

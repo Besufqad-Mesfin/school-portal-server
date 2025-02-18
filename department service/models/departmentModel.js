@@ -2,7 +2,7 @@ import { Sequelize, DataTypes } from 'sequelize';
 import { sequelize } from '../config/database.js'; // Ensure this points to your configured Sequelize instance
 
 const Department = sequelize.define('Department', {
-  id: {
+  departmentId: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
@@ -12,8 +12,8 @@ const Department = sequelize.define('Department', {
     allowNull: false,
     unique: true,
   },
-  headId: {
-    type: DataTypes.INTEGER,
+  headName: {
+    type: DataTypes.STRING,
     allowNull: false,
     references: {
       model: 'Teachers', // Reference to the Teachers table in the usermanagement service
