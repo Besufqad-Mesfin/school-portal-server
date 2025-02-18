@@ -1,6 +1,7 @@
 import express from 'express';
 import { 
     getStudentGradeNotifications, 
+    getStudentNotifications,
     getAnnouncements, 
     getStudentUnreadNotifications, 
     getTeacherNotifications, 
@@ -23,6 +24,7 @@ import {
 const router = express.Router();
 
 // Student Notifications
+router.get('/student/:studentId', getStudentNotifications);
 router.get('/student/:studentId/grades', getStudentGradeNotifications);
 router.get('/student/:studentId/unread', getStudentUnreadNotifications);
 
