@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import { sequelize } from '../config/database.js'; // Ensure this points to your configured Sequelize instance
+import sequelize from '../config/db.js'; // Ensure this points to your configured Sequelize instance
 
 const Department = sequelize.define('Department', {
   departmentId: {
@@ -12,13 +12,9 @@ const Department = sequelize.define('Department', {
     allowNull: false,
     unique: true,
   },
-  headName: {
+  headName: {  // ✅ Removed foreign key reference
     type: DataTypes.STRING,
     allowNull: false,
-    references: {
-      model: 'Teachers', // Reference to the Teachers table in the usermanagement service
-      key: 'id',
-    },
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -32,8 +28,6 @@ const Department = sequelize.define('Department', {
   }
 }, {
   timestamps: true,
-  updatedAt: 'updatedAt',
-  createdAt: 'createdAt',
 });
 
 export default Department;

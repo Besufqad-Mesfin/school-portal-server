@@ -1,4 +1,4 @@
-import DepartmentTeachers from '../models/departmentTeachers.js';
+import DepartmentTeacher from '../models/departmentTeachers.js';
 import Department from '../models/departmentModel.js';  // Import the Department model
 
 // Controller to create a new department
@@ -145,7 +145,7 @@ export const assignTeacherToDepartment = async (req, res) => {
     const { departmentId, teacherId } = req.body;
 
     // Create a new record in DepartmentTeachers
-    const assignment = await DepartmentTeachers.create({
+    const assignment = await DepartmentTeacher.create({
       departmentId,
       teacherId
     });
@@ -165,7 +165,7 @@ export const assignTeacherToDepartment = async (req, res) => {
 // Controller to get all teacher assignments for departments
 export const getDepartmentTeachers = async (req, res) => {
   try {
-    const assignments = await DepartmentTeachers.findAll();
+    const assignments = await DepartmentTeacher.findAll();
     res.status(200).json({
       message: 'Department teachers fetched successfully',
       data: assignments
@@ -182,7 +182,7 @@ export const getDepartmentTeachers = async (req, res) => {
 export const getTeachersByDepartmentId = async (req, res) => {
   try {
     const { departmentId } = req.params;
-    const teachers = await DepartmentTeachers.findAll({ where: { departmentId } });
+    const teachers = await DepartmentTeacher.findAll({ where: { departmentId } });
 
     res.status(200).json({
       message: 'Teachers for department fetched successfully',
@@ -201,7 +201,7 @@ export const removeTeacherFromDepartment = async (req, res) => {
   try {
     const { departmentId, teacherId } = req.params;
 
-    const assignment = await DepartmentTeachers.findOne({
+    const assignment = await DepartmentTeacher.findOne({
       where: { departmentId, teacherId }
     });
 
