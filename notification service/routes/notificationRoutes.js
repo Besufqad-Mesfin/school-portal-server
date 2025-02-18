@@ -18,8 +18,6 @@ import {
     bulkMarkNotificationsAsUnread, 
     deleteNotification, 
     bulkDeleteNotifications, 
-    updateNotification, 
-    updateNotificationSettings 
 } from '../controllers/notificationController.js';
 
 const router = express.Router();
@@ -55,7 +53,6 @@ router.delete('/:notificationId', deleteNotification);
 router.delete('/bulk', bulkDeleteNotifications);
 
 // Update Notifications
-router.put('/:notificationId', updateNotification);
-router.put('/settings/:userId', updateNotificationSettings);
+
 
 export default router;

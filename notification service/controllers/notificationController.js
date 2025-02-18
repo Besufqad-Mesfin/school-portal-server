@@ -1,4 +1,4 @@
-import { Notification, UserSettings } from '../models/notification.js';
+import { Notification, UserSettings } from '../models/notificationModel.js';
 
 // Get student grade notifications
 export const getStudentGradeNotifications = async (req, res) => {
