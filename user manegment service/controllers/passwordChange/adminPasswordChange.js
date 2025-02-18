@@ -7,17 +7,14 @@ import bcrypt from "bcryptjs";
 export async function changePassword(req, res) {
 
   try {
-    const { currentPassword, newPassword, email } = req.body; // Only newPassword is required since validation is done on the frontend.
+    const { oldPassword, newPassword, email } = req.body; // Only newPassword is required since validation is done on the frontend.
 
     // Step 1: Authenticate user
-    const user = await AdminModel.findByPk(email); // Fetch admin from the AdminModel
+    const user = await AdminModel.findOne({where:{email}}); // Fetch admin from the AdminModel
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const isPasswordValid = await bcrypt.compare(
-      currentPassword,
-      user.password
-    ); // Compare the current password with the hashed password
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password); // Compare the current password with the hashed password
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid password" });
     }
