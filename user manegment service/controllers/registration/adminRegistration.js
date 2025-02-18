@@ -36,18 +36,11 @@ const registerAdmin = async (req, res) => {
       educationLevel,
     });
 
+    const { password: adminPassword, ...admin } = newAdmin.toJSON(); // Exclude password from the response
     // Respond with success message and the new admin's details (excluding password)
     res.status(201).json({
       message: 'Admin registered successfully',
-      admin: {
-        firstName: newAdmin.firstName,
-        lastName: newAdmin.lastName,
-        email: newAdmin.email,
-        phoneNumber: newAdmin.phoneNumber,
-        sex: newAdmin.sex,
-        role: newAdmin.role,
-        educationLevel: newAdmin.educationLevel,
-      },
+      admin: admin,
     });
   } catch (error) {
     console.error('Error registering admin:', error);
