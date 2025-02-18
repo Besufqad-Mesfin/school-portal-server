@@ -4,7 +4,7 @@ import registerTeacher from '../controllers/registration/teacherRegistration.js'
 import studentRegister from '../controllers/registration/studentRegisteration.js';
 import staffRegister from '../controllers/registration/adminRegistration.js';
 import { changePassword } from '../controllers/passwordChange/adminPasswordChange.js';
-import { adminLogout } from '../controllers/Logout/adminLogout.js';
+import { adminLogout } from '../controllers/logout/adminLogout.js';
 
 
 const adminRoute = express.Router();
