@@ -5,8 +5,7 @@ const StudentModel = sequelize.define(
   {
     studentId: {
       type: DataTypes.STRING,
-      unique: true,
-      allowNull: false,
+      primaryKey:true,
     },
     firstName: {
       type: DataTypes.STRING,
