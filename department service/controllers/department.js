@@ -4,7 +4,7 @@ import Department from '../models/departmentModel.js';  // Import the Department
 // Controller to create a new department
 export const createDepartment = async (req, res) => {
   try {
-    const { departmentId, name, description } = req.body;
+    const { departmentId, name, headName } = req.body;
 
     // Create a new department entry
     const newDepartment = await Department.create({
@@ -12,7 +12,7 @@ export const createDepartment = async (req, res) => {
       name,
       headName,
     });
-
+    console.log("kjhbfn")
     // Send a success response
     res.status(201).json({
       message: 'Department created successfully',
@@ -92,7 +92,7 @@ export const updateDepartment = async (req, res) => {
 
     // Update the department information
     department.name = name || department.name;
-    department.head = headName || department.headName;
+    department.headName = headName || department.headName;
 
     await department.save(); // Save the updated department
 
@@ -109,6 +109,7 @@ export const updateDepartment = async (req, res) => {
     });
   }
 };
+
 
 // Controller to delete a department by its ID
 export const deleteDepartment = async (req, res) => {
