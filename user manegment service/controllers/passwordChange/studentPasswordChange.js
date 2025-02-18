@@ -1,5 +1,5 @@
 // controllers/studentPasswordUpdate.js
-import Student from '../../models/studentModel.js';
+import StudentModel from '../../models/studentModel.js';
 import bcrypt from 'bcryptjs';
 export const updateStudentPassword = async (req, res) => {
     const { studentId, oldPassword, newPassword } = req.body;
