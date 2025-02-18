@@ -48,3 +48,4 @@ const AdminModel = sequelize.define("Admins", {
 export default AdminModel;
 
 
+

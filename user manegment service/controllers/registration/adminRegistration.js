@@ -1,8 +1,9 @@
-import AdminModel from "../../models/adminModel.js";
-import bcrypt from 'bcryptjs';
-import crypto from 'crypto';
+import AdminModel from '../../models/adminModel.js'; // Adjust the path if necessary
+import bcrypt from 'bcryptjs'; // Assuming you want to hash the password
 
-const staffRegister = async (req, res) => {
+const registerAdmin = async (req, res) => {
+  try {
+    // Destructuring the fields from the request body
     const {
       firstName,
       lastName,
@@ -14,50 +15,37 @@ const staffRegister = async (req, res) => {
       educationLevel,
     } = req.body;
 
-    // Check validation
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !password ||
-      !phoneNumber ||
-      !sex ||
-      !role ||
-      !educationLevel
-    ) {
-      return res.status(400).json({ error: "All fields are required" });
+    // Check if admin with the same email already exists
+    const existingAdmin = await AdminModel.findOne({ where: { email } });
+    if (existingAdmin) {
+      return res.status(400).json({ message: 'Admin with this email already exists' });
     }
 
-    try {
-        // Check if the user already exists
-        const existingUser = await AdminModel.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ error: 'User already exists' });
-        }
+    // Hash the password before saving it to the database
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        const generatedPassword = password || crypto.randomBytes(8).toString('hex');
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+    // Create the new admin
+    const newAdmin = await AdminModel.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword, // Storing hashed password
+      phoneNumber,
+      sex,
+      role,
+      educationLevel,
+    });
 
-        // Create a new user
-        const newUser = new AdminModel({
-          firstName,
-          lastName,
-          email,
-          password: hashedPassword,
-          phoneNumber,
-          sex,
-          role,
-          educationLevel,
-        });
-
-        // Save the user to the database
-        await newUser.save();
-
-        res.status(201).json({ message: 'Staff registered successfully' });
-    } catch (error) {
-        res.status(500).json({ error: 'Error registering staff' });
-    }
+    const { password: adminPassword, ...admin } = newAdmin.toJSON(); // Exclude password from the response
+    // Respond with success message and the new admin's details (excluding password)
+    res.status(201).json({
+      message: 'Admin registered successfully',
+      admin: admin,
+    });
+  } catch (error) {
+    console.error('Error registering admin:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
-export default staffRegister;
+export default registerAdmin;
