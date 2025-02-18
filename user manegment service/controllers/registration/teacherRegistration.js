@@ -65,9 +65,10 @@ const registerTeacher = async (req, res) => {
             contactNo,       // Corresponds to the model's contactNo
         });
 
+        const { password: teacherPassword, ...teacher } = newTeacher.toJSON(); // Exclude password from the response
         res.status(201).json({
             message: 'Teacher registered successfully!',
-            teacher: newTeacher,
+            teacher: teacher,
         });
     } catch (error) {
         console.error('Error registering teacher:', error);
