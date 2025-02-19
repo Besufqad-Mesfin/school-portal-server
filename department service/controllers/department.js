@@ -85,11 +85,18 @@ export const getDepartmentById = async (req, res) => {
   }
 };
 
-// Controller to update a department by its ID
 export const updateDepartment = async (req, res) => {
   try {
     const { departmentId } = req.params;
-    const { name, headName } = req.body;
+    const { name, headName, phoneNumber, emailAddress, availability } = req.body;
+
+    // Validate availability input if provided
+    const validDays = ['Monday', 'Tuesday', 'Friday'];
+    if (availability && !validDays.includes(availability)) {
+      return res.status(400).json({
+        message: 'Invalid availability. Must be one of: Monday, Tuesday, Friday',
+      });
+    }
 
     // Find the department by its ID
     const department = await Department.findOne({ where: { departmentId } });
@@ -100,25 +107,28 @@ export const updateDepartment = async (req, res) => {
       });
     }
 
-    // Update the department information
+    // Update department details only if new values are provided
     department.name = name || department.name;
     department.headName = headName || department.headName;
+    department.phoneNumber = phoneNumber || department.phoneNumber;
+    department.emailAddress = emailAddress || department.emailAddress;
+    department.availability = availability || department.availability;
 
     await department.save(); // Save the updated department
 
-    // Send a success response
     res.status(200).json({
       message: 'Department updated successfully',
       data: department
     });
+
   } catch (error) {
-    // Send an error response if something goes wrong
     res.status(500).json({
       message: 'Error updating department',
       error: error.message
     });
   }
 };
+
 
 
 // Controller to delete a department by its ID
