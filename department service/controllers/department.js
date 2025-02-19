@@ -4,28 +4,38 @@ import Department from '../models/departmentModel.js';  // Import the Department
 // Controller to create a new department
 export const createDepartment = async (req, res) => {
   try {
-    const { departmentId, name, headName } = req.body;
+    const { departmentId, name, headName, phoneNumber, emailAddress, availability } = req.body;
+
+    // Validate availability input
+    const validDays = ['Monday', 'Tuesday', 'Friday'];
+    if (!validDays.includes(availability)) {
+      return res.status(400).json({
+        message: 'Invalid availability. Must be one of: Monday, Tuesday, Friday',
+      });
+    }
 
     // Create a new department entry
     const newDepartment = await Department.create({
       departmentId,
       name,
       headName,
+      phoneNumber,
+      emailAddress,
+      availability,
     });
-    console.log("kjhbfn")
-    // Send a success response
+
     res.status(201).json({
       message: 'Department created successfully',
       data: newDepartment
     });
   } catch (error) {
-    // Send an error response if something goes wrong
     res.status(500).json({
       message: 'Error creating department',
       error: error.message
     });
   }
 };
+
 
 // Controller to get all departments
 export const getDepartments = async (req, res) => {
