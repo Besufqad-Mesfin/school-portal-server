@@ -12,8 +12,23 @@ const Department = sequelize.define('Department', {
     allowNull: false,
     unique: true,
   },
-  headName: {  // ✅ Removed foreign key reference
+  headName: {  
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  phoneNumber: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  emailAddress: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      isEmail: true, // Ensures valid email format
+    },
+  },
+  availability: {
+    type: DataTypes.ENUM('Monday', 'Tuesday', 'Friday'),
     allowNull: false,
   },
   createdAt: {
