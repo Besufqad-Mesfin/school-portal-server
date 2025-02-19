@@ -143,12 +143,13 @@ export const deleteDepartment = async (req, res) => {
 
 export const assignTeacherToDepartment = async (req, res) => {
   try {
-    const { departmentId, teacherId } = req.body;
+    const { departmentId, teacherId, teacherName } = req.body;
 
     // Create a new record in DepartmentTeachers
     const assignment = await DepartmentTeacher.create({
       departmentId,
-      teacherId
+      teacherId,
+      teacherName
     });
 
     res.status(201).json({
@@ -163,21 +164,7 @@ export const assignTeacherToDepartment = async (req, res) => {
   }
 };
 
-// Controller to get all teacher assignments for departments
-export const getDepartmentTeachers = async (req, res) => {
-  try {
-    const assignments = await DepartmentTeacher.findAll();
-    res.status(200).json({
-      message: 'Department teachers fetched successfully',
-      data: assignments
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Error fetching department teachers',
-      error: error.message
-    });
-  }
-};
+
 
 // Controller to get teachers assigned to a specific department
 export const getTeachersByDepartmentId = async (req, res) => {

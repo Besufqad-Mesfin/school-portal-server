@@ -6,7 +6,6 @@ import {
   updateDepartment,
   deleteDepartment,
   assignTeacherToDepartment,
-  getDepartmentTeachers,
   getTeachersByDepartmentId,
   removeTeacherFromDepartment
 } from '../controllers/department.js';
@@ -22,7 +21,6 @@ router.delete('/department/:departmentId', deleteDepartment);
 
 // Department-Teacher Relationship Routes
 router.post('/department/assign-teacher', assignTeacherToDepartment);
-router.get('/department/teachers', getDepartmentTeachers);
 router.get('/department/:departmentId/teachers', getTeachersByDepartmentId);
 router.delete('/department/:departmentId/teacher/:teacherId', removeTeacherFromDepartment);
 
