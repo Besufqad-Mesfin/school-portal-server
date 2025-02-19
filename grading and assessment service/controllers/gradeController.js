@@ -1,4 +1,4 @@
-import Grade from "../models/gradeModel.js";  // Use import for the Grade model
+import GradeModel from "../models/gradeModel.js";  // Use import for the Grade model
 import { Op } from "sequelize";  // Use import for Sequelize operators
 
 // Insert a new mark and grade
@@ -10,7 +10,12 @@ const insertMarkGrade = async (req, res) => {
             return res.status(400).json({ message: "Please provide all required fields" });
         }
 
-        const studentGrade = await Grade.create({studentId, courseId, assessmentId, mark, grade});
+        const studentGrade = await GradeModel.create({
+          studentId,
+          courseId,
+          assessmentId,
+          mark,
+        });
         res.status(201).json({message: "Grade inserted successfully", grade:studentGrade});
 
     } catch (error) {
@@ -28,13 +33,13 @@ const getStudentGrades = async (req, res) => {
             return res.status(400).json({ message: "Please provide a student ID" });
         }
 
-        const studentGrades = await Grade.findAll({
-            where: {
-                studentId: studentId,
-            },
+        const studentGrades = await GradeModel.findAll({
+          where: {
+            studentId: studentId,
+          },
         });
 
-        if(!studentGrades){
+        if(studentGrades.length === 0){
             return res.status(404).json({ message: "No grades found for this student" });
         }
 
@@ -46,7 +51,7 @@ const getStudentGrades = async (req, res) => {
     }
 };
 
-// change grade for a specific student
+// Change grade for a specific student
 const changeGrade = async (req, res) => {
     try {
         const gradeId = req.params.gradeId;
@@ -56,22 +61,28 @@ const changeGrade = async (req, res) => {
             return res.status(400).json({ message: "Please provide all required fields" });
         }
 
-        const updatedGrade = await Grade.update({
+        const updatedGrade = await GradeModel.update(
+          {
             mark: mark,
             grade: grade,
-        }, {
+          },
+          {
             where: {
-                [Op.and]: [{ gradeId: gradeId }, { studentId: studentId }, { assessmentId: assessmentId }, { courseId: courseId }],
+              [Op.and]: [
+                { id: gradeId },
+                { studentId: studentId },
+                { assessmentId: assessmentId },
+                { courseId: courseId },
+              ],
             },
-        });
+          }
+        );
 
         if (updatedGrade[0] === 0) {
-            return res.status(404).json({ message: "I can't update the grade" });
+            return res.status(404).json({ message: "Grade not found or no changes made" });
         }
 
-        
-
-        res.status(200).json({ message: "Grade updated successfully", grade: updatedGrade });
+        res.status(200).json({ message: "Grade updated successfully" });
 
     } catch (error) {
         console.error(error);
