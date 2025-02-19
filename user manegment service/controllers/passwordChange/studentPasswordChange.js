@@ -1,5 +1,5 @@
 // controllers/studentPasswordUpdate.js
-import Student from '../models/studentRegisterModel.js';
+import StudentModel from '../../models/studentModel.js';
 import bcrypt from 'bcryptjs';
 export const updateStudentPassword = async (req, res) => {
     const { studentId, oldPassword, newPassword } = req.body;
@@ -9,7 +9,7 @@ export const updateStudentPassword = async (req, res) => {
     }
     try {
         // Find the student by studentId
-        const student = await Student.findOne({ where: { studentId } });
+        const student = await StudentModel.findOne({ where: { studentId } });
         if (!student) {
             return res.status(404).json({ success: false, message: 'Student not found.' });
         }

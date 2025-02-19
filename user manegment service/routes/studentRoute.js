@@ -1,7 +1,7 @@
 import express from 'express';
 import { studentLogin } from '../controllers/login/studentLogin.js'; // Ensure this matches exactly
 import { updateStudentPassword } from '../controllers/passwordChange/studentPasswordChange.js';
-import { studentLogout } from '../controllers/Logout/studentLogout.js';
+import { studentLogout } from '../controllers/logout/studentLogout.js';
 const studentRoute = express.Router();
 
 studentRoute.post('/login', studentLogin); 

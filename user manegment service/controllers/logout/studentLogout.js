@@ -1,5 +1,5 @@
 // controllers/Logout/studentLogout.js
-export const AdminLogout = (req, res) => {
+export const studentLogout = (req, res) => {
     try {
         // If using sessions
         if (req.session) {

@@ -3,10 +3,9 @@ import sequelize from "../config/db.js"; // Import the initialized sequelize ins
 import { DataTypes } from "sequelize";
 
 // Define the UserTeacher model using the imported sequelize instance
-const teacherModel = sequelize.define("teacherModel", {
+const TeacherModel = sequelize.define("Teachers", {
   teacherId: {
     type: DataTypes.STRING,
-    allowNull: false,
     primaryKey: true, // Make teacherId the primary key
   },
   firstName: {
@@ -43,4 +42,4 @@ const teacherModel = sequelize.define("teacherModel", {
  
 });
 
-export default teacherModel;
+export default TeacherModel;

@@ -1,5 +1,5 @@
 import { Op } from 'sequelize'; // Include this line
-import Student from '../../models/studentModels.js';
+import Student from '../../models/studentModel.js';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 
@@ -31,8 +31,8 @@ const studentRegister = async (req, res) => {
       });
     }
 
-    const generatedPassword = password || crypto.randomBytes(8).toString('hex');
-    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+    // Generate a random password for the student
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new student record in the database
     const newStudent = await Student.create({
@@ -49,22 +49,11 @@ const studentRegister = async (req, res) => {
       password: hashedPassword,
     });
 
+    const { password: studentPassword, ...student } = newStudent.toJSON(); // Exclude password from the response
     res.status(201).json({
       success: true,
       message: 'Student registered successfully!',
-      student: {
-        id: newStudent.id,
-        studentId: newStudent.studentId,
-        firstName: newStudent.firstName,
-        lastName: newStudent.lastName,
-        email: newStudent.email,
-        grade: newStudent.grade,
-        familyFirstName: newStudent.familyFirstName,
-        familyLastName: newStudent.familyLastName,
-        familyContact: newStudent.familyContact,
-        region: newStudent.region,
-        kebele: newStudent.kebele, 
-      },
+      student: student,
     });
   } catch (error) {
     console.error('Error registering student:', error);
