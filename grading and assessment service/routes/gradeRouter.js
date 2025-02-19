@@ -1,5 +1,5 @@
-const express = require("express");
-const {insertMarkGrade, getStudentGrades, changeGrade} = require("../controllers/gradeController");
+import express from "express";
+import { insertMarkGrade, getStudentGrades, changeGrade } from "../controllers/gradeController.js";
 
 const gradeRouter = express.Router();
 
@@ -12,4 +12,4 @@ gradeRouter.get("/student/:studentId", getStudentGrades);
 // Handle grade change requests
 gradeRouter.put("/grade-change/:gradeId", changeGrade);
 
-module.exports = gradeRouter;
+export default gradeRouter;
