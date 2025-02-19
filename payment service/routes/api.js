@@ -3,6 +3,6 @@ import paymentRoutes from './paymentRoutes.js';
 const api = express.Router(); 
 
 
-api.use('/api', paymentRoutes);
+api.use('/payment', paymentRoutes);
 
 export default api; 

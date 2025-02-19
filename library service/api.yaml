@@ -1,0 +1,224 @@
+
+openapi: 3.0.0
+info:
+  title: Library Management API
+  description: API for managing books and transactions in a library system
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /book/addBook:
+    post:
+      summary: Add a new book
+      operationId: addBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                author:
+                  type: string
+                isbn:
+                  type: string
+                availableCopies:
+                  type: integer
+      responses:
+        "201":
+          description: Book added successfully
+        "400":
+          description: Invalid request
+
+  /book/updateBook:
+    put:
+      summary: Update a book
+      operationId: updateBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookId:
+                  type: integer
+                title:
+                  type: string
+                author:
+                  type: string
+                isbn:
+                  type: string
+                availableCopies:
+                  type: integer
+      responses:
+        "200":
+          description: Book updated successfully
+        "400":
+          description: Invalid request
+
+  /book/deleteBook/{bookId}:
+    delete:
+      summary: Delete a book by ID
+      operationId: deleteBook
+      parameters:
+        - name: bookId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Book deleted successfully
+        "404":
+          description: Book not found
+
+  /book/getBooks:
+    get:
+      summary: Get all books
+      operationId: getBooks
+      responses:
+        "200":
+          description: A list of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    bookId:
+                      type: integer
+                    title:
+                      type: string
+                    author:
+                      type: string
+                    isbn:
+                      type: string
+                    availableCopies:
+                      type: integer
+
+  /book/searchBooks:
+    get:
+      summary: Search for books
+      operationId: searchBooks
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    bookId:
+                      type: integer
+                    title:
+                      type: string
+                    author:
+                      type: string
+                    isbn:
+                      type: string
+                    availableCopies:
+                      type: integer
+
+  /book/borrow:
+    post:
+      summary: Borrow a book
+      operationId: borrowBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookId:
+                  type: integer
+                studentId:
+                  type: string
+                dueDate:
+                  type: string
+                  format: date
+      responses:
+        "200":
+          description: Book borrowed successfully
+        "400":
+          description: Invalid request
+
+  /book/return:
+    post:
+      summary: Return a borrowed book
+      operationId: returnBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookId:
+                  type: integer
+                studentId:
+                  type: string
+      responses:
+        "200":
+          description: Book returned successfully
+        "400":
+          description: Invalid request
+
+  /book/usage:
+    get:
+      summary: Generate book usage reports
+      operationId: generateUsageReports
+      responses:
+        "200":
+          description: Report generated successfully
+        "400":
+          description: Unable to generate report
+
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        bookId:
+          type: integer
+        title:
+          type: string
+        author:
+          type: string
+        isbn:
+          type: string
+        availableCopies:
+          type: integer
+
+    BookTransaction:
+      type: object
+      properties:
+        bookTransactionId:
+          type: integer
+        bookId:
+          type: integer
+        studentId:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        returnDate:
+          type: string
+          format: date
+        returned:
+          type: boolean

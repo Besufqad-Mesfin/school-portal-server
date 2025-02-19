@@ -1,6 +1,6 @@
-import Payment from '../models/paymentModels';
+import Payment from '../models/paymentModels.js';
 import { Sequelize } from 'sequelize';
-import BookTransaction from '../../library service/models/bookTransaction';
+import BookTransaction from '../../library service/models/BookTransaction.js';
 const generateReceiptNumber = () => {
     return 'ReceiptNumber-' + Math.random().toString(36).substr(2, 8).toUpperCase();
 };
@@ -40,7 +40,7 @@ export const createPayment = async (req, res) => {
             bankName: paymentMethod === 'bank_transfer' ? bankName : null,
             transactionId: paymentMethod === 'bank_transfer' ? transactionId : null,
             accountNumber: paymentMethod === 'bank_transfer' ? accountNumber : null,
-            status: paymentMethod === 'bank_transfer' ? 'pending' : 'completed', 
+            status: paymentMethod === 'bank_transfer' ?'completed':'pending', 
             paymentDate: new Date(),
             receiptNumber,
             receiptDate: new Date(),
@@ -63,7 +63,7 @@ export const createPayment = async (req, res) => {
 
 
 export const getPaymentHistory = async (req, res) => {
-    const { studentId } = req.params; 
+    const { studentId } = req.body; 
     const { startDate, endDate, status } = req.query; 
 
     if (!studentId) {
@@ -165,29 +165,18 @@ export const calculateFines = async (req, res) => {
     }
 };
 
-// Function to verify a payment record
 export const verifyPayment = async (req, res) => {
-    const { paymentId, isValid } = req.body; // Extract paymentId and isValid directly from the request body
-
+    const { paymentId, isValid } = req.body; 
     try {
-        // Find the payment record by its ID
-        const payment = await Payment.findByPk(paymentId); // `findByPk` fetches record by primary key
+        const payment = await Payment.findByPk(paymentId); 
         if (!payment) {
-            // If payment is not found, respond with a 404 error
             return res.status(404).json({ message: 'Payment not found' });
         }
-
-        // Update payment status based on the isValid flag
         payment.status = isValid ? 'completed' : 'failed';
-
-        // Save the updated payment record to the database
         await payment.save();
-
-        // Respond with a success message and the updated payment record
         res.status(200).json({ message: 'Payment verified successfully', payment });
     } catch (error) {
-        // Handle any errors during the process and respond with a 500 error
-        console.error("Error verifying payment:", error); // Logs detailed error for debugging
+        console.error("Error verifying payment:", error); 
         res.status(500).json({ message: error.message });
     }
 };
