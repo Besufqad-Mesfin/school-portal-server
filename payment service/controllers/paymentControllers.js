@@ -114,8 +114,20 @@ export const requestRefund = async (req, res) => {
             return res.status(400).json({ message: "Only completed payments can be refunded." });
         }
 
+        const paymentDate = new Date(payment.paymentDate);
+        const currentDate = new Date();
+        const daysSincePayment = Math.ceil((currentDate - paymentDate) / (1000 * 60 * 60 * 24));
+
+        let refundAmount = payment.amount;
+
+        if (daysSincePayment > 7) {
+            const daysOverdue = daysSincePayment - 7;
+            const penaltyPercentage = daysOverdue * 0.10; 
+            refundAmount = Math.max(0, payment.amount * (1 - penaltyPercentage));
+        }
+
         payment.refundStatus = 'pending';
-        payment.refundAmount = payment.amount;
+        payment.refundAmount = refundAmount;
         payment.refundDate = new Date();
         payment.status = 'refunded';
         await payment.save();
@@ -145,38 +157,33 @@ export const calculateFines = async (req, res) => {
 
         const today = new Date();
         let fine = 0;
-        if (!transaction.returnDate && today > transaction.dueDate) {
-            const daysOverdue = Math.ceil((today - transaction.dueDate) / (1000 * 60 * 60 * 24));
-            fine = daysOverdue * 0.5; 
-        }
-        if (fine > 100) {
-            fine = 100;
-        }
-        await Payment.upsert({
-            borrowTransactionId,  
-            amount: fine,
-            paid: false
-        });
 
+        // Check if the book has been returned
+        if (!transaction.returnDate) {
+            // Check if the due date has passed
+            if (today > transaction.dueDate) {
+                const daysOverdue = Math.ceil((today - transaction.dueDate) / (1000 * 60 * 60 * 24));
+                fine = daysOverdue * 0.5; // Example: $0.5 per day
+                if (fine > 100) {
+                    fine = 100; // Cap the fine at $100
+                }
+            }
+        }
+
+        // If the due date is not reached, fine remains 0
         res.status(200).json({ fine });
     } catch (error) {
-        console.error("Error processing refund request:", error);
+        console.error("Error calculating fines:", error);
         res.status(500).json({ message: error.message });
     }
 };
 
-export const verifyPayment = async (req, res) => {
-    const { paymentId, isValid } = req.body; 
+export const getPayment = async (req, res) => {
     try {
-        const payment = await Payment.findByPk(paymentId); 
-        if (!payment) {
-            return res.status(404).json({ message: 'Payment not found' });
-        }
-        payment.status = isValid ? 'completed' : 'failed';
-        await payment.save();
-        res.status(200).json({ message: 'Payment verified successfully', payment });
+        const pays = await Payment.findAll(); 
+        res.status(200).json(pays); 
     } catch (error) {
-        console.error("Error verifying payment:", error); 
         res.status(500).json({ message: error.message });
     }
 };
+
