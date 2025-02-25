@@ -1,11 +1,11 @@
 {
-  "name": "user-manegment-service",
+  "name": "report-service",
   "version": "1.0.0",
   "description": "This project is a backend server for a school portal application. It provides various functionalities to manage students, teachers, courses, and other school-related activities.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon src/index.js"
   },
   "keywords": [],
   "type": "module",
