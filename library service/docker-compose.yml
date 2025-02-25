@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mock
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  library-service:
+    build: .
+    container_name: library-container
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql  # Use the service name 'mysql'
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: mock
+    ports:
+      - "5000:5000"
+
+volumes:
+  mysql_data:
