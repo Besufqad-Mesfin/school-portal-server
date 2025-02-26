@@ -1,6 +1,7 @@
 import { Sequelize } from 'sequelize';
 import Department from './departmentModel.js';
 import sequelize from "../config/db.js";
+
 const DepartmentTeacher = sequelize.define('DepartmentTeachers', {
   id: {
       type: Sequelize.INTEGER,
@@ -12,12 +13,12 @@ const DepartmentTeacher = sequelize.define('DepartmentTeachers', {
       type: Sequelize.INTEGER,
       allowNull: false,
       references: {
-          model: 'Department',  // Make sure the referenced table is correctly named 'Departments'
-          key: 'id'
+          model: Department,  // ✅ Use the actual model reference
+          key: 'departmentId' // ✅ Ensure it matches the primary key name in Department
       }
   },
   teacherId: {
-    type: Sequelize.STRING,  // Change this to STRING to store teacherId as a string
+    type: Sequelize.STRING,  
     allowNull: false,
   },
   createdAt: {
@@ -29,9 +30,8 @@ const DepartmentTeacher = sequelize.define('DepartmentTeachers', {
       allowNull: false
   }
 }, {
-  tableName: 'DepartmentTeachers',  // Ensure the table name matches what you intend
-  timestamps: true  // Automatically manage createdAt and updatedAt fields
+  tableName: 'DepartmentTeachers',
+  timestamps: true  
 });
-
 
 export default DepartmentTeacher;

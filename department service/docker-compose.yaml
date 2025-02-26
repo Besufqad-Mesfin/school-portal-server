@@ -1,0 +1,33 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Bb0939852436
+      MYSQL_DATABASE: school_portal_user_management_service
+      MYSQL_USER: bruk
+      MYSQL_PASSWORD: Bb0939852436
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  department-service:
+    build: .
+    container_name: department-container
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql  # This should match the MySQL service name
+      DB_USER: bruk
+      DB_PASSWORD: Bb0939852436
+      DB_NAME: school_portal_user_management_service
+      DB_DIALECT: mysql
+    ports:
+      - "5000:5000"
+    command: ["sh", "-c", "sleep 10 && npm start"]  # Wait for MySQL before starting
+
+volumes:
+  mysql_data:

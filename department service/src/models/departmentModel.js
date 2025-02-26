@@ -1,5 +1,7 @@
+import sequelize from "../config/db.js";
 import { Sequelize, DataTypes } from 'sequelize';
-import sequelize from '../config/db.js'; // Ensure this points to your configured Sequelize instance
+
+
 
 const Department = sequelize.define('Department', {
   departmentId: {
@@ -24,7 +26,7 @@ const Department = sequelize.define('Department', {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      isEmail: true, // Ensures valid email format
+      isEmail: true,
     },
   },
   availability: {
@@ -43,6 +45,7 @@ const Department = sequelize.define('Department', {
   }
 }, {
   timestamps: true,
+  tableName: 'Department',  // ✅ Explicitly set the table name
 });
 
 export default Department;

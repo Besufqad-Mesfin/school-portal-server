@@ -1,31 +1,35 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import api from './routes/api.js';
-import sequelize from './config/db.js';  // Import sequelize from db.js
+import sequelize from './config/db.js';
+import Department from './models/departmentModel.js';
+import DepartmentTeacher from './models/departmentTeachers.js';
 
-// Load environment variables from .env file
+// Load environment variables
 dotenv.config();
 
-// Set the port from environment variables or default to 5000
 const PORT = process.env.PORT || 5000;
-
-// Initialize the express application
 const app = express();
-
-// Middleware to parse JSON requests
 app.use(express.json());
-
-// Use the router for '/api' route
 app.use('/api', api);
 
-// Start the server and sync the database
-app.listen(PORT, async () => {
+// Sync database models in the correct order
+const syncDatabase = async () => {
   try {
-    // Sync database models
-    await sequelize.sync();
-    console.log("Database connected and models synced");
-  } catch (err) {
-    console.error("Error connecting to the database:", err);
+    await sequelize.authenticate();
+    console.log("✅ Database connected...");
+
+    await Department.sync({ force: true });  // Drops table if exists, recreates
+    await DepartmentTeacher.sync({ force: true }); 
+
+    console.log("✅ Tables synced successfully!");
+  } catch (error) {
+    console.error("❌ Error syncing database:", error);
   }
-  console.log(`Server is running on port ${PORT}`);
+};
+
+// Start server
+app.listen(PORT, async () => {
+  await syncDatabase();
+  console.log(`🚀 Server is running on port ${PORT}`);
 });
