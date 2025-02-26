@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pay
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mynetwork
+
+  payment-container:
+    build: .
+    container_name: payment-container
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql  # Use the service name 'mysql'
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: pay
+    ports:
+      - "4000:4000"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  mysql_data:
