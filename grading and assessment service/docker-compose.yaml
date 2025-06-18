@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: Besu@hazi21
+      MYSQL_DATABASE: users_db
+      MYSQL_USER: besu
+      MYSQL_PASSWORD: Besu@hazi21
+    ports:
+      - "3307:3306"
+    networks:
+      - school-portal-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: grading-assessment-container
+    environment:
+      DB_HOST: mysql-container
+      DB_NAME: users_db
+      DB_USER: besu
+      DB_PASSWORD: Besu@hazi21
+      DB_DIALECT: mysql
+      DB_PORT: 3306
+      PORT: 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+    networks:
+      - school-portal-network
+
+networks:
+  school-portal-network:
+    driver: bridge
